@@ -1,0 +1,13 @@
+DROP TABLE IF EXISTS `courses`;
+
+CREATE TABLE `courses`
+(
+    `id`            BIGINT NOT NULL AUTO_INCREMENT,
+    `instructor_id` BIGINT NOT NULL,
+    `title`         VARCHAR(255) NOT NULL,
+    `category`      ENUM('DEVELOPMENT', 'DESIGN', 'MARKETING', 'BUSINESS') NOT NULL,
+    `description`   VARCHAR(255) NOT NULL,
+    `date_created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `date_modified` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    PRIMARY KEY (`id`)
+);
