@@ -1,7 +1,22 @@
 package com.lxp;
 
-public class Application {
-    public static void main(String[] args) {
+import com.lxp.config.DBConfig;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class Application {
+
+    public static void main(String[] args) {
+        try (Scanner scanner = new Scanner(System.in);
+             DBConfig dbConfig = new DBConfig();
+             Connection connection = dbConfig.getConnection()) {
+
+            //todo 기능 정의
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
