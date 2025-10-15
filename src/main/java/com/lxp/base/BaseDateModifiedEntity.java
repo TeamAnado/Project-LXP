@@ -2,7 +2,7 @@ package com.lxp.base;
 
 import java.time.LocalDateTime;
 
-public abstract class BaseDateModifiedEntity {
+public abstract class BaseDateModifiedEntity extends BaseDateCreatedEntity {
     private LocalDateTime dateModified;
 
     public void recordDateModified() {
