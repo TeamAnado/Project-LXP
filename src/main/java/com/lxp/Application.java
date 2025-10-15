@@ -1,9 +1,9 @@
 package com.lxp;
 
 import com.lxp.config.DBConfig;
+import com.lxp.exception.LXPExceptionHandler;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Scanner;
 
 public class Application {
@@ -15,8 +15,8 @@ public class Application {
 
             //todo 기능 정의
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            LXPExceptionHandler.handle(e);
         }
     }
 }
