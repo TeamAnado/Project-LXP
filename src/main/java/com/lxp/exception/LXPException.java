@@ -10,11 +10,4 @@ public class LXPException extends RuntimeException {
         super(message, cause);
     }
 
-    public static LXPException create(String message) {
-        return new LXPException(message);
-    }
-
-    public static LXPException create(String message, Throwable cause) {
-        return new LXPException(message, cause);
-    }
 }
