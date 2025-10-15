@@ -18,6 +18,7 @@ public class UserDao {
     public void save(User user) {
         String sql = QueryUtil.getQuery("user.save");
 
+        user.recordTime();
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, user.getEmail());
             ps.setString(2, user.getPassword());
