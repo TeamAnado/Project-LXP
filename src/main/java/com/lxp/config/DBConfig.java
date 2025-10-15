@@ -10,14 +10,22 @@ import java.util.Properties;
 
 public class DBConfig implements AutoCloseable {
 
+    private static DBConfig instance;
     private final HikariDataSource dataSource;
 
-    public DBConfig() {
+    private DBConfig() {
         this.dataSource = getDataSource(new Properties());
 
         if (dataSource == null) {
             throw new NullPointerException("dataSource is null");
         }
+    }
+
+    public static synchronized DBConfig getInstance() {
+        if (instance == null) {
+            instance = new DBConfig();
+        }
+        return instance;
     }
 
     public Connection getConnection() throws SQLException {
