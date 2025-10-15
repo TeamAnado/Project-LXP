@@ -3,24 +3,24 @@
     <!-- QUESTION -->
 
     <!-- Insert a new root question (parent_id = NULL, root_id will be updated after) -->
-    <query key="INSERT_ROOT_QUESTION">
+    <query key="question.insertRootQuestion">
         INSERT INTO questions (lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified)
         VALUES (?, ?, 0, NULL, ?, ?, NOW(), NOW())
     </query>
     
     <!-- Update root_id for a question (used after inserting root question) -->
-    <query key="UPDATE_ROOT_ID">
+    <query key="question.updateRootId">
         UPDATE questions SET root_id = ? WHERE id = ?
     </query>
     
     <!-- Insert a reply question (with parent_id and root_id) -->
-    <query key="INSERT_REPLY_QUESTION">
+    <query key="question.insertReplyQuestion">
         INSERT INTO questions (lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified)
         VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
     </query>
     
     <!-- Find questions by writer (user_id) - for user profile page -->
-    <query key="FIND_QUESTIONS_BY_USER">
+    <query key="question.findQuestionsByUser">
         SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
         FROM questions
         WHERE user_id = ?
@@ -28,7 +28,7 @@
     </query>
     
     <!-- Find root questions by lecture_id - for lecture page -->
-    <query key="FIND_ROOT_QUESTIONS_BY_LECTURE">
+    <query key="question.findRootQuestionsByLecture">
         SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
         FROM questions
         WHERE lecture_id = ? AND parent_id IS NULL
@@ -36,7 +36,7 @@
     </query>
     
     <!-- Find complete thread by root_id -->
-    <query key="FIND_THREAD_BY_ROOT_ID">
+    <query key="question.findThreadByRootId">
         SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
         FROM questions
         WHERE root_id = ?
@@ -44,7 +44,7 @@
     </query>
     
     <!-- Find a question by ID -->
-    <query key="FIND_QUESTION_BY_ID">
+    <query key="question.findQuestionById">
         SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
         FROM questions
         WHERE id = ?
@@ -82,22 +82,22 @@
 <!--    </query>-->
     
     <!-- Check if question exists -->
-    <query key="CHECK_QUESTION_EXISTS">
+    <query key="question.checkQuestionExists">
         SELECT COUNT(1) FROM questions WHERE id = ?
     </query>
     
     <!-- Get root question creator -->
-    <query key="GET_ROOT_QUESTION_CREATOR">
+    <query key="question.getRootQuestionCreator">
         SELECT user_id FROM questions WHERE id = ? AND parent_id IS NULL
     </query>
     
     <!-- Count replies in thread -->
-    <query key="COUNT_THREAD_REPLIES">
+    <query key="question.countThreadReplies">
         SELECT COUNT(1) - 1 as reply_count FROM questions WHERE root_id = ?
     </query>
     
     <!-- Find direct replies to a question -->
-    <query key="FIND_DIRECT_REPLIES">
+    <query key="question.findDirectReplies">
         SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
         FROM questions
         WHERE parent_id = ?

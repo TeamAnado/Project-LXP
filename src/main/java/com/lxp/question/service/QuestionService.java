@@ -37,7 +37,7 @@ public class QuestionService {
         // TODO
 
         // Check if user is enrolled in the course
-        if (!userDAO.isUserEnrolled(userId, lectureId)) {
+        if (!enrollmentDAO.isUserEnrolled(userId, lectureId)) {
             throw new IllegalAccessException("User must be enrolled in the course to ask questions");
         }
         
@@ -78,7 +78,7 @@ public class QuestionService {
         Long rootCreatorId = questionDAO.getRootQuestionCreator(rootId);
         
         // Check if user can reply (instructor or root creator)
-        boolean isInstructor = userDAO.isUserInstructor(userId, parentQuestion.getLectureId());
+        boolean isInstructor = courseDAO.isUserInstructor(userId, parentQuestion.getLectureId());
         boolean isRootCreator = userId.equals(rootCreatorId);
         
         if (!isInstructor && !isRootCreator) {
@@ -180,7 +180,7 @@ public class QuestionService {
 
         // TODO
 
-        return userDAO.isUserEnrolled(userId, lectureId);
+        return enrollmentDAO.isUserEnrolled(userId, lectureId);
     }
     
     /**
@@ -196,7 +196,7 @@ public class QuestionService {
         }
         
         // Check if user is instructor
-        if (userDAO.isUserInstructor(userId, question.getLectureId())) {
+        if (courseDAO.isUserInstructor(userId, question.getLectureId())) {
             return true;
         }
         

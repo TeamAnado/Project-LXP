@@ -23,7 +23,7 @@ public class QuestionDAO {
      * Insert a new root question and return its ID
      */
     public Long insertRootQuestion(Question question) throws SQLException {
-        String sql = QueryUtil.getQuery("INSERT_ROOT_QUESTION");
+        String sql = QueryUtil.getQuery("question.insertRootQuestion");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setLong(1, question.getLectureId());
@@ -53,7 +53,7 @@ public class QuestionDAO {
      * Insert a reply question and return its ID
      */
     public Long insertReply(Question question) throws SQLException {
-        String sql = QueryUtil.getQuery("INSERT_REPLY_QUESTION");
+        String sql = QueryUtil.getQuery("question.insertReplyQuestion");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stmt.setLong(1, question.getLectureId());
@@ -82,7 +82,7 @@ public class QuestionDAO {
      * Update root_id for a question
      */
     private void updateRootId(Long questionId, Long rootId) throws SQLException {
-        String sql = QueryUtil.getQuery("UPDATE_ROOT_ID");
+        String sql = QueryUtil.getQuery("question.updateRootId");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, rootId);
@@ -95,7 +95,7 @@ public class QuestionDAO {
      * Find all questions by user_id (for user profile page)
      */
     public List<Question> findQuestionsByUser(Long userId) throws SQLException {
-        String sql = QueryUtil.getQuery("FIND_QUESTIONS_BY_USER");
+        String sql = QueryUtil.getQuery("question.findQuestionsByUser");
         List<Question> questions = new ArrayList<>();
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -115,7 +115,7 @@ public class QuestionDAO {
      * Find root questions by lecture_id (for lecture page)
      */
     public List<Question> findRootQuestionsByLecture(Long lectureId) throws SQLException {
-        String sql = QueryUtil.getQuery("FIND_ROOT_QUESTIONS_BY_LECTURE");
+        String sql = QueryUtil.getQuery("question.findRootQuestionsByLecture");
         List<Question> questions = new ArrayList<>();
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -135,7 +135,7 @@ public class QuestionDAO {
      * Find complete thread by root_id
      */
     public List<Question> findThreadByRootId(Long rootId) throws SQLException {
-        String sql = QueryUtil.getQuery("FIND_THREAD_BY_ROOT_ID");
+        String sql = QueryUtil.getQuery("question.findThreadByRootId");
         List<Question> questions = new ArrayList<>();
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
@@ -155,7 +155,7 @@ public class QuestionDAO {
      * Find question by ID
      */
     public Question findQuestionById(Long id) throws SQLException {
-        String sql = QueryUtil.getQuery("FIND_QUESTION_BY_ID");
+        String sql = QueryUtil.getQuery("question.findQuestionById");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, id);
@@ -213,7 +213,7 @@ public class QuestionDAO {
      * Get the user_id of the root question creator
      */
     public Long getRootQuestionCreator(Long rootId) throws SQLException {
-        String sql = QueryUtil.getQuery("GET_ROOT_QUESTION_CREATOR");
+        String sql = QueryUtil.getQuery("question.getRootQuestionCreator");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, rootId);
@@ -231,7 +231,7 @@ public class QuestionDAO {
      * Check if question exists
      */
     public boolean questionExists(Long questionId) throws SQLException {
-        String sql = QueryUtil.getQuery("CHECK_QUESTION_EXISTS");
+        String sql = QueryUtil.getQuery("question.checkQuestionExists");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, questionId);
@@ -246,7 +246,7 @@ public class QuestionDAO {
      * Count replies in a thread
      */
     public int countThreadReplies(Long rootId) throws SQLException {
-        String sql = QueryUtil.getQuery("COUNT_THREAD_REPLIES");
+        String sql = QueryUtil.getQuery("question.countThreadReplies");
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setLong(1, rootId);
@@ -264,7 +264,7 @@ public class QuestionDAO {
      * Find direct replies to a question
      */
     public List<Question> findDirectReplies(Long parentId) throws SQLException {
-        String sql = QueryUtil.getQuery("FIND_DIRECT_REPLIES");
+        String sql = QueryUtil.getQuery("question.findDirectReplies");
         List<Question> questions = new ArrayList<>();
         
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
