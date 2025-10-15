@@ -4,6 +4,7 @@ import com.lxp.user.User;
 import com.lxp.user.dao.UserDao;
 import com.lxp.user.dto.UserSaveRequest;
 import com.lxp.user.dto.UserSaveResponse;
+import com.lxp.user.exception.UserAlreadyExistsException;
 import com.lxp.user.validator.PasswordEncoder;
 
 public class UserService {
@@ -16,6 +17,9 @@ public class UserService {
     }
 
     public UserSaveResponse register(UserSaveRequest request) {
+        if (userDao.existByEmail(request.email())) {
+            throw new UserAlreadyExistsException();
+        }
         String hashedPassword = encoder.encode(request.rawPassword());
         User user = request.to(hashedPassword);
         userDao.save(user);

@@ -1,5 +1,6 @@
 package com.lxp.user.dao;
 
+import com.lxp.exception.LXPDatabaseAccessException;
 import com.lxp.support.QueryUtil;
 import com.lxp.user.User;
 import com.lxp.user.exception.UserNotSavedException;
@@ -7,6 +8,7 @@ import com.lxp.user.exception.UserNotSavedException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class UserDao {
     private final Connection connection;
@@ -29,6 +31,18 @@ public class UserDao {
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new UserNotSavedException(e);
+        }
+    }
+
+    public boolean existByEmail(String email) {
+        String sql = QueryUtil.getQuery("user.existByEmail");
+
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, email);
+            int n = ps.executeUpdate();
+            return n > 0;
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("데이터베이스 접속 중 오류 발생", e);
         }
     }
 }
