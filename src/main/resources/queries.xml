@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+    <!-- QUESTION -->
+
+    <!-- Insert a new root question (parent_id = NULL, root_id will be updated after) -->
+    <query key="INSERT_ROOT_QUESTION">
+        INSERT INTO questions (lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified)
+        VALUES (?, ?, 0, NULL, ?, ?, NOW(), NOW())
+    </query>
+    
+    <!-- Update root_id for a question (used after inserting root question) -->
+    <query key="UPDATE_ROOT_ID">
+        UPDATE questions SET root_id = ? WHERE id = ?
+    </query>
+    
+    <!-- Insert a reply question (with parent_id and root_id) -->
+    <query key="INSERT_REPLY_QUESTION">
+        INSERT INTO questions (lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified)
+        VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+    </query>
+    
+    <!-- Find questions by writer (user_id) - for user profile page -->
+    <query key="FIND_QUESTIONS_BY_USER">
+        SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
+        FROM questions
+        WHERE user_id = ?
+        ORDER BY date_created DESC
+    </query>
+    
+    <!-- Find root questions by lecture_id - for lecture page -->
+    <query key="FIND_ROOT_QUESTIONS_BY_LECTURE">
+        SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
+        FROM questions
+        WHERE lecture_id = ? AND parent_id IS NULL
+        ORDER BY date_created DESC
+    </query>
+    
+    <!-- Find complete thread by root_id -->
+    <query key="FIND_THREAD_BY_ROOT_ID">
+        SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
+        FROM questions
+        WHERE root_id = ?
+        ORDER BY date_created ASC
+    </query>
+    
+    <!-- Find a question by ID -->
+    <query key="FIND_QUESTION_BY_ID">
+        SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
+        FROM questions
+        WHERE id = ?
+    </query>
+    
+<!-- This should be handled by ENROLLMENT part-->
+<!-- Check if user is enrolled in course (through lecture) -->
+<!--    <query key="CHECK_USER_ENROLLMENT">-->
+<!--        SELECT COUNT(1) as enrolled-->
+<!--        FROM enrollments e-->
+<!--        JOIN courses c ON e.course_id = c.id-->
+<!--        JOIN sections s ON c.id = s.course_id-->
+<!--        JOIN lectures l ON s.id = l.section_id-->
+<!--        WHERE e.user_id = ? AND l.id = ? AND e.state = 1-->
+<!--    </query>-->
+
+<!-- This should be handled by USER part -->
+<!-- Check if user is instructor of the course (through lecture) -->
+<!--    <query key="CHECK_USER_IS_INSTRUCTOR">-->
+<!--        SELECT COUNT(1) as is_instructor-->
+<!--        FROM courses c-->
+<!--        JOIN sections s ON c.id = s.course_id-->
+<!--        JOIN lectures l ON s.id = l.section_id-->
+<!--        WHERE c.instructor_id = ? AND l.id = ?-->
+<!--    </query>-->
+
+<!-- This should be handled by LECTURE part -->
+<!-- Get lecture information -->
+<!--    <query key="GET_LECTURE_INFO">-->
+<!--        SELECT l.id, l.section_id, l.title, l.description, c.instructor_id-->
+<!--        FROM lectures l-->
+<!--        JOIN sections s ON l.section_id = s.id-->
+<!--        JOIN courses c ON s.course_id = c.id-->
+<!--        WHERE l.id = ?-->
+<!--    </query>-->
+    
+    <!-- Check if question exists -->
+    <query key="CHECK_QUESTION_EXISTS">
+        SELECT COUNT(1) FROM questions WHERE id = ?
+    </query>
+    
+    <!-- Get root question creator -->
+    <query key="GET_ROOT_QUESTION_CREATOR">
+        SELECT user_id FROM questions WHERE id = ? AND parent_id IS NULL
+    </query>
+    
+    <!-- Count replies in thread -->
+    <query key="COUNT_THREAD_REPLIES">
+        SELECT COUNT(1) - 1 as reply_count FROM questions WHERE root_id = ?
+    </query>
+    
+    <!-- Find direct replies to a question -->
+    <query key="FIND_DIRECT_REPLIES">
+        SELECT id, lecture_id, user_id, root_id, parent_id, title, body, date_created, date_modified
+        FROM questions
+        WHERE parent_id = ?
+        ORDER BY date_created ASC
+    </query>
+</queries>
