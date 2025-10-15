@@ -7,6 +7,7 @@ import com.lxp.user.exception.UserNotSavedException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -37,10 +38,16 @@ public class UserDao {
     public boolean existByEmail(String email) {
         String sql = QueryUtil.getQuery("user.existByEmail");
 
+        boolean flag = false;
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, email);
-            int n = ps.executeUpdate();
-            return n > 0;
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    flag = rs.getInt(1) > 0;
+                }
+                return flag;
+            }
         } catch (SQLException e) {
             throw new LXPDatabaseAccessException("데이터베이스 접속 중 오류 발생", e);
         }
