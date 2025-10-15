@@ -8,7 +8,7 @@ public class LXPExceptionHandler {
     }
 
     private static void printStackTrace(Exception e) {
-        if (isCauseNull(e)) {
+        if (!isCauseNull(e)) {
             System.err.println("  Caused by: " + e.getCause().getMessage());
             e.getCause().printStackTrace();
             return;
