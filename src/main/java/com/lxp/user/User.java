@@ -32,6 +32,11 @@ public class User extends BaseDateModifiedEntity {
         return password;
     }
 
+    public void recordTime() {
+        this.recordCreationTime();
+        this.recordDateModified();
+    }
+
     public void update(String name) {
         validateUsername(name);
         this.name = name;

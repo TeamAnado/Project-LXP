@@ -6,8 +6,6 @@ import com.lxp.user.dto.UserSaveRequest;
 import com.lxp.user.dto.UserSaveResponse;
 import com.lxp.user.validator.PasswordEncoder;
 
-import java.sql.SQLException;
-
 public class UserService {
     private final PasswordEncoder encoder;
     private final UserDao userDao;
@@ -17,7 +15,7 @@ public class UserService {
         this.userDao = userDao;
     }
 
-    public UserSaveResponse register(UserSaveRequest request) throws SQLException {
+    public UserSaveResponse register(UserSaveRequest request) {
         String hashedPassword = encoder.encode(request.rawPassword());
         User user = request.to(hashedPassword);
         userDao.save(user);
