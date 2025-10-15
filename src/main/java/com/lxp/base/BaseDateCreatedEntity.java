@@ -3,9 +3,10 @@ package com.lxp.base;
 import java.time.LocalDateTime;
 
 public abstract class BaseDateCreatedEntity extends BaseEntity {
-    private LocalDateTime dateCreated;
+    private final LocalDateTime dateCreated;
 
-    public void recordCreationTime() {
+    protected BaseDateCreatedEntity(Long id) {
+        super(id);
         this.dateCreated = LocalDateTime.now();
     }
 

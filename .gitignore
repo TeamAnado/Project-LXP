@@ -45,3 +45,4 @@ bin/
 
 ### config ###
 /src/main/resources/env.properties
+/src/main/resources/queries.xml
