@@ -1,0 +1,15 @@
+package com.lxp.base;
+
+import java.time.LocalDateTime;
+
+public abstract class BaseDateModifiedEntity {
+    private LocalDateTime dateModified;
+
+    public void recordDateModified() {
+        this.dateModified = LocalDateTime.now();
+    }
+
+    public LocalDateTime getDateModified() {
+        return dateModified;
+    }
+}
