@@ -8,23 +8,18 @@ import java.time.LocalDateTime;
  * Question entity for the Q&A threading system.
  */
 public class Question extends BaseDateModifiedEntity {
-    
-    private Long id;
     private Long lectureId;
     private Long userId;
     private Long rootId;
     private Long parentId; // null for root questions
     private String title;
     private String body;
-    private LocalDateTime dateCreated;
     
     // Default constructor
     public Question() {
-        this.dateCreated = LocalDateTime.now();
+        recordCreationTime();
         recordDateModified();
     }
-    
-    // Constructor for root question
 
     /**
      * Constructor for root question
@@ -76,14 +71,14 @@ public class Question extends BaseDateModifiedEntity {
      */
     public Question(Long id, Long lectureId, Long userId, Long rootId, Long parentId, 
                    String title, String body, LocalDateTime dateCreated, LocalDateTime dateModified) {
-        this.id = id;
+        super.setId(id);
         this.lectureId = lectureId;
         this.userId = userId;
         this.rootId = rootId;
         this.parentId = parentId;
         this.title = title;
         this.body = body;
-        this.dateCreated = dateCreated;
+        // this.dateCreated = dateCreated;
         // Set the dateModified through the base class (if needed)
     }
     
@@ -97,14 +92,6 @@ public class Question extends BaseDateModifiedEntity {
     }
     
     // Getters and Setters
-    public Long getId() {
-        return id;
-    }
-    
-    public void setId(Long id) {
-        this.id = id;
-    }
-    
     public Long getLectureId() {
         return lectureId;
     }
@@ -155,25 +142,17 @@ public class Question extends BaseDateModifiedEntity {
         recordDateModified();
     }
     
-    public LocalDateTime getDateCreated() {
-        return dateCreated;
-    }
-    
-    public void setDateCreated(LocalDateTime dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-    
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
+                "id=" + getId() +
                 ", lectureId=" + lectureId +
                 ", userId=" + userId +
                 ", rootId=" + rootId +
                 ", parentId=" + parentId +
                 ", title='" + title + '\'' +
                 ", body='" + body + '\'' +
-                ", dateCreated=" + dateCreated +
+                ", dateCreated=" + getDateCreated() +
                 ", dateModified=" + getDateModified() +
                 ", isRoot=" + isRootQuestion() +
                 '}';
