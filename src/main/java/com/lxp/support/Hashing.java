@@ -1,5 +1,7 @@
 package com.lxp.support;
 
+import com.lxp.exception.LXPException;
+
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import java.security.NoSuchAlgorithmException;
@@ -52,7 +54,7 @@ public class Hashing {
     private static String[] divide(String s) {
         String[] parts = s.split(DELIMITER);
         if (parts.length != 2) {
-            throw new IllegalArgumentException("저장된 해시 문자열 형식이 잘못되었습니다.");
+            throw new LXPException("저장된 해시 문자열 형식이 잘못되었습니다.");
         }
         return parts;
     }
