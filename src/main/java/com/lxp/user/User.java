@@ -11,13 +11,16 @@ public class User extends BaseDateModifiedEntity {
     private String email;
     private String password;
 
-    public User(String name, String email, String password) {
-        validateUsername(name);
-        validateEmail(email);
-        validatePassword(password);
+    private User(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
+    }
+
+    public static User createWithHashedPassword(String name, String email, String hashedPassword) {
+        validateUsername(name);
+        validateEmail(email);
+        return new User(name, email, hashedPassword);
     }
 
     public String getName() {

@@ -9,7 +9,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class UserDao {
     private final Connection connection;
@@ -39,7 +38,7 @@ public class UserDao {
         String sql = QueryUtil.getQuery("user.existByEmail");
 
         boolean flag = false;
-        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, email);
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -49,7 +48,7 @@ public class UserDao {
                 return flag;
             }
         } catch (SQLException e) {
-            throw new LXPDatabaseAccessException("데이터베이스 접속 중 오류 발생", e);
+            throw new LXPDatabaseAccessException("이메일 체크 중 데이터베이스 접속 중 오류 발생", e);
         }
     }
 }
