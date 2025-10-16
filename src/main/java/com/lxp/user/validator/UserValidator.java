@@ -8,7 +8,7 @@ import static com.lxp.support.StringUtils.isBlank;
 
 public class UserValidator {
     private static final int USERNAME_MIN_LENGTH = 3;
-    private static final int PASSWORD_MAX_LENGTH = 16;
+    private static final int USERNAME_MAX_LENGTH = 16;
     private static final String PASSWORD_REGEX = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[!@#$%^&*()-+=]).{8,}$";
     private static final String EMAIL_REGEX = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
 
@@ -32,6 +32,6 @@ public class UserValidator {
 
     private static boolean invalidUsernameLength(String username) {
         int usernameLength = username.length();
-        return usernameLength < USERNAME_MIN_LENGTH || usernameLength > PASSWORD_MAX_LENGTH;
+        return usernameLength < USERNAME_MIN_LENGTH || usernameLength > USERNAME_MAX_LENGTH;
     }
 }
