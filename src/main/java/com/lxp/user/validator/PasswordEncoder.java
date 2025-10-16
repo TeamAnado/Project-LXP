@@ -1,6 +1,5 @@
 package com.lxp.user.validator;
 
-import com.lxp.exception.LXPExceptionHandler;
 import com.lxp.support.Hashing;
 import com.lxp.user.exception.PasswordCheckException;
 import com.lxp.user.exception.PasswordEncodingException;
@@ -19,7 +18,6 @@ public class PasswordEncoder {
         try {
             return Hashing.matches(rawPassword, hashedPassword);
         } catch (Exception e) {
-            LXPExceptionHandler.handle(e);
             throw new PasswordCheckException(e);
         }
     }
