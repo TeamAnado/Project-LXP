@@ -20,28 +20,26 @@ public class LectureDao {
     public long save(Lecture lecture) {
         String sql = QueryUtil.getQuery("lecture.save");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            lecture.recordTime();
+        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setLong(1, lecture.getSectionId());
+            stmt.setString(2, lecture.getTitle());
+            stmt.setString(3, lecture.getDescription());
+            stmt.setTimestamp(4, Timestamp.valueOf(lecture.getDateCreated()));
+            stmt.setTimestamp(5, Timestamp.valueOf(lecture.getDateModified()));
 
-            pstmt.setLong(1, lecture.getSectionId());
-            pstmt.setString(2, lecture.getTitle());
-            pstmt.setString(3, lecture.getDescription());
-            pstmt.setTimestamp(4, Timestamp.valueOf(lecture.getDateCreated()));
-            pstmt.setTimestamp(5, Timestamp.valueOf(lecture.getDateModified()));
-
-            int affectedRows = pstmt.executeUpdate();
+            int affectedRows = stmt.executeUpdate();
             if (affectedRows == 0) {
                 throw new SQLException("강의 생성에 실패했습니다. (0 rows affected)");
             }
 
-            return getGeneratedKey(pstmt);
+            return getGeneratedKey(stmt);
         } catch (SQLException e) {
             throw new LXPException("강의 저장을 실패하였습니다.", e);
         }
     }
 
-    private long getGeneratedKey(PreparedStatement pstmt) throws SQLException {
-        try (ResultSet rs = pstmt.getGeneratedKeys()) {
+    private long getGeneratedKey(PreparedStatement stmt) throws SQLException {
+        try (ResultSet rs = stmt.getGeneratedKeys()) {
             if (rs.next()) {
                 return rs.getLong(1);
             } else {

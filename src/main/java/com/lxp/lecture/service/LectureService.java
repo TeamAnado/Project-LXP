@@ -6,6 +6,7 @@ import com.lxp.lecture.dto.LectureCreateRequest;
 import com.lxp.lecture.dto.LectureCreateResponse;
 import com.lxp.lecture.model.Lecture;
 import com.lxp.section.dao.SectionDao;
+import com.lxp.section.domain.Section;
 
 public class LectureService {
     private final LectureDao lectureDao;
@@ -17,19 +18,20 @@ public class LectureService {
     }
 
     public LectureCreateResponse save(LectureCreateRequest lectureRequest) {
-        findBySectionId(lectureRequest);
-        
+        Section section = findBySectionId(lectureRequest);
+
         Lecture lecture = Lecture.of(
-                lectureRequest.sectionId(),
+                section.getId(),
                 lectureRequest.title(),
                 lectureRequest.description()
         );
+        lecture.recordTime();
 
         return new LectureCreateResponse(lectureDao.save(lecture));
     }
 
-    private void findBySectionId(LectureCreateRequest lectureRequest) {
-        sectionDao.findById(lectureRequest.sectionId())
+    private Section findBySectionId(LectureCreateRequest lectureRequest) {
+        return sectionDao.findById(lectureRequest.sectionId())
                 .orElseThrow(() -> new LXPException("존재하지 않는 섹션 ID 입니다."));
     }
 }
