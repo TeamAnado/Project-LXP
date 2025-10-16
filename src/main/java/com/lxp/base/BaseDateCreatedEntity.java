@@ -12,4 +12,8 @@ public abstract class BaseDateCreatedEntity extends BaseEntity {
     public LocalDateTime getDateCreated() {
         return dateCreated;
     }
+
+    protected void setDateCreated(LocalDateTime dateCreated) {
+        this.dateCreated = dateCreated;
+    }
 }
