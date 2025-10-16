@@ -1,34 +1,100 @@
 package com.lxp.user.service;
 
-import com.lxp.user.User;
+import com.lxp.exception.LXPExceptionHandler;
 import com.lxp.user.dao.UserDao;
-import com.lxp.user.dto.UserSaveRequest;
-import com.lxp.user.dto.UserSaveResponse;
+import com.lxp.user.dao.vo.UserAuthInfo;
 import com.lxp.user.exception.UserAlreadyExistsException;
-import com.lxp.user.validator.PasswordEncoder;
-import com.lxp.user.validator.UserValidator;
+import com.lxp.user.exception.UserNotFoundException;
+import com.lxp.user.model.User;
+import com.lxp.user.presentation.controller.response.UserSaveResponse;
+import com.lxp.user.security.PasswordEncoder;
+import com.lxp.user.service.dto.UserFindPasswordDto;
+import com.lxp.user.service.dto.UserLoginDto;
+import com.lxp.user.service.dto.UserSaveDto;
+import com.lxp.user.service.dto.UserUpdatePasswordDto;
+import com.lxp.user.service.validator.UserValidator;
 
 import java.util.Objects;
 
 public class UserService {
+
     private final PasswordEncoder encoder;
+    private final UserValidator validator;
     private final UserDao userDao;
 
-    public UserService(PasswordEncoder encoder, UserDao userDao) {
+    public UserService(PasswordEncoder encoder, UserValidator validator, UserDao userDao) {
         this.encoder = encoder;
+        this.validator = validator;
         this.userDao = userDao;
     }
 
-    public UserSaveResponse register(UserSaveRequest request) {
-        Objects.requireNonNull(request, "request must not be null");
+    public UserSaveResponse register(UserSaveDto dto) {
+        Objects.requireNonNull(dto, "request must not be null");
 
-        if (userDao.existByEmail(request.email())) {
+        if (userDao.existByEmail(dto.email())) {
             throw new UserAlreadyExistsException();
         }
-        UserValidator.validatePassword(request.rawPassword());
-        String hashedPassword = encoder.encode(request.rawPassword());
-        User user = request.to(hashedPassword);
+        validateRegister(dto);
+
+        String hashedPassword = encoder.encode(dto.rawPassword());
+        User user = dto.to(hashedPassword);
         userDao.save(user);
+
         return UserSaveResponse.to(user);
     }
+
+    public UserAuthInfo login(UserLoginDto dto) {
+        Objects.requireNonNull(dto, "request must not be null");
+
+        UserAuthInfo info = findByEmail(dto.email());
+        validator.authenticatePassword(dto.password(), info.password());
+
+        return info;
+    }
+
+    public UserAuthInfo findByEmail(String email) {
+        validator.validateEmail(email);
+        return userDao.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException("이메일 또는 비밀번호가 틀렸습니다."));
+    }
+
+    public UserAuthInfo isExistUser(String email) {
+        Objects.requireNonNull(email, "request must not be null");
+
+        UserAuthInfo info = UserAuthInfo.empty();
+        try {
+            info = findByEmail(email);
+        } catch (UserNotFoundException e) {
+            LXPExceptionHandler.handle(e);
+        }
+        return info;
+    }
+
+    public boolean updatePassword(UserUpdatePasswordDto dto) {
+        Objects.requireNonNull(dto, "request must not be null");
+
+        UserAuthInfo userAuthInfo = userDao.findById(dto.id())
+            .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
+        validator.authenticatePassword(dto.oldPassword(), userAuthInfo.password());
+
+        String hashedPassword = encoder.encode(dto.newPassword());
+        return userDao.updatePassword(dto.id(), hashedPassword);
+    }
+
+    public boolean resetPassword(UserFindPasswordDto dto) {
+        if (!userDao.existById(dto.id())) {
+            throw new UserNotFoundException("사용자가 존재하지 않습니다.");
+        }
+        validator.validatePassword(dto.newPassword());
+
+        String hashedPassword = encoder.encode(dto.newPassword());
+        return userDao.updatePassword(dto.id(), hashedPassword);
+    }
+
+    private void validateRegister(UserSaveDto dto) {
+        validator.validateEmail(dto.email());
+        validator.validateUsername(dto.name());
+        validator.validatePassword(dto.rawPassword());
+    }
+
 }

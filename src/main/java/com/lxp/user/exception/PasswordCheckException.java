@@ -15,4 +15,5 @@ public class PasswordCheckException extends LXPException {
     public PasswordCheckException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }
