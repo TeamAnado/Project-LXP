@@ -6,6 +6,7 @@ import com.lxp.course.model.enums.Category;
 import com.lxp.support.QueryUtil;
 
 import java.sql.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,17 +23,17 @@ public class CourseDAO {
         String sql = QueryUtil.getQuery("course.findAll");
 
         try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            ResultSet re = pstmt.executeQuery();
+            ResultSet rs= pstmt.executeQuery();
 
-            while (re.next()) {
+            while (rs.next()) {
                 Course course = new Course(
-                    re.getLong("id"),
-                    re.getString("title"),
-                    re.getString("description"),
-                    re.getTimestamp("date_created").toLocalDateTime(),
-                    re.getTimestamp("date_modified").toLocalDateTime(),
-                    re.getLong("instructor_id"),
-                    Category.valueOf(re.getString("category"))
+                    rs.getLong("id"),
+                    rs.getString("title"),
+                    rs.getString("description"),
+                    rs.getTimestamp("date_created").toLocalDateTime(),
+                    rs.getTimestamp("date_modified").toLocalDateTime(),
+                    rs.getLong("instructor_id"),
+                    Category.valueOf(rs.getString("category"))
                 );
                 courseList.add(course);
 
@@ -105,5 +106,29 @@ public class CourseDAO {
             }
         }
         return courseList;
+    }
+
+    public void update(Course course) throws SQLException {
+        String sql = QueryUtil.getQuery("course.update");
+
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            pstmt.setString(1, course.getTitle());
+            pstmt.setString(2, course.getDescription());
+            pstmt.setString(3, course.getCategory().name());
+            pstmt.setTimestamp(4, java.sql.Timestamp.valueOf(LocalDateTime.now()));
+            pstmt.setLong(5, course.getId());
+
+            pstmt.executeUpdate();
+        }
+    }
+
+    public void delete(Long id) throws SQLException {
+        String sql = QueryUtil.getQuery("course.delete");
+
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            pstmt.executeUpdate();
+        }
     }
 }

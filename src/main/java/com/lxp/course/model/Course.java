@@ -52,5 +52,21 @@ public class Course extends BaseDateModifiedEntity {
     public Category getCategory() {
         return category;
     }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setInstructorId(Long instructorId) {
+        this.instructorId = instructorId;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }
 

@@ -5,6 +5,7 @@ import com.lxp.course.model.Course;
 import com.lxp.course.service.dto.CourseDetailDto;
 import com.lxp.course.service.dto.CourseListDto;
 import com.lxp.course.service.dto.CreateCourseDto;
+import com.lxp.course.service.dto.UpdateCourseDto;
 import com.lxp.exception.LXPException;
 
 import java.sql.SQLException;
@@ -15,9 +16,10 @@ import java.util.stream.Collectors;
 public class CourseService {
     private final CourseDAO courseDAO;
 
-    public CourseService() throws SQLException {
-        courseDAO = new CourseDAO();
+    public CourseService(CourseDAO courseDAO) {
+        this.courseDAO = courseDAO;
     }
+
 
     public Long createCourse (CreateCourseDto dto) throws SQLException {
         Course course = new Course(
@@ -74,8 +76,26 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
+    public void updateCourse(UpdateCourseDto dto) throws SQLException {
+        Course course = courseDAO.findById(dto.id());
+        if (course == null) {
+            throw new LXPException("수정하려는 강좌를 찾을 수 없습니다. ID:" + dto.id());
+        }
+        course.setTitle(dto.title());
+        course.setDescription(dto.description());
+        course.setCategory(dto.category());
 
+        courseDAO.update(course);
+    }
 
+    public void deleteCourseById(Long id) throws SQLException {
+        Course course = courseDAO.findById(id);
 
+        if (course == null) {
+            throw new LXPException("삭제하려는 강좌를 찾을 수 없습니다. ID:" + id);
+        }
+
+        courseDAO.delete(id);
+    }
 }
 
