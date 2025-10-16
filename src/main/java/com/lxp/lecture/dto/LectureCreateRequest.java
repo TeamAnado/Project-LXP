@@ -1,6 +1,9 @@
 package com.lxp.lecture.dto;
 
-import com.lxp.exception.LXPException;
+import com.lxp.lecture.exception.InvalidDescriptionException;
+import com.lxp.lecture.exception.InvalidSectionIdException;
+import com.lxp.lecture.exception.InvalidTitleException;
+import com.lxp.support.StringUtils;
 
 public record LectureCreateRequest(
         Long sectionId,
@@ -15,19 +18,19 @@ public record LectureCreateRequest(
 
     private void validateSectionId(Long sectionId) {
         if (sectionId == null) {
-            throw new LXPException("섹션 ID는 null일 수 없습니다.");
+            throw new InvalidSectionIdException();
         }
     }
 
     private void validateTitle(String title) {
-        if (title == null || title.isBlank()) {
-            throw new LXPException("강의 제목은 비어 있을 수 없습니다.");
+        if (StringUtils.isBlank(title)) {
+            throw new InvalidTitleException();
         }
     }
 
     private void validateDescription(String description) {
-        if (description == null || description.isBlank()) {
-            throw new LXPException("강의 설명은 비어 있을 수 없습니다.");
+        if (StringUtils.isBlank(description)) {
+            throw new InvalidDescriptionException();
         }
     }
 }
