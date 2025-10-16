@@ -1,6 +1,6 @@
 package com.lxp.user;
 
-import com.lxp.base.BaseDateModifiedEntity;
+import com.lxp.global.base.BaseDateModifiedEntity;
 
 import static com.lxp.user.validator.UserValidator.validateEmail;
 import static com.lxp.user.validator.UserValidator.validateUsername;

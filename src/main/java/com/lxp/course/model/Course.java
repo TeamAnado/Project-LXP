@@ -1,13 +1,12 @@
 package com.lxp.course.model;
 
-import com.lxp.base.BaseDateModifiedEntity;
+import com.lxp.global.base.BaseDateModifiedEntity;
 import com.lxp.course.model.enums.Category;
 
 import java.time.LocalDateTime;
 
 public class Course extends BaseDateModifiedEntity {
 
-    // Field Space
     private Long instructorId;
     private String title;
     private Category category;
@@ -69,5 +68,6 @@ public class Course extends BaseDateModifiedEntity {
     public Category getCategory() {
         return category;
     }
+
 }
 

@@ -1,4 +1,4 @@
-package com.lxp.base;
+package com.lxp.global.base;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
 package com.lxp.course.dao;
 
-import com.lxp.config.DBConfig;
+import com.lxp.global.config.DBConfig;
 import com.lxp.course.model.Course;
 import com.lxp.course.model.enums.Category;
 import com.lxp.support.QueryUtil;
@@ -27,16 +27,16 @@ public class CourseDAO {
         String sql = QueryUtil.getQuery("course.findAll");
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            ResultSet re = pstmt.executeQuery();
-            while (re.next()) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
                 Course course = new Course(
-                        re.getLong("id"),
-                        re.getString("title"),
-                        re.getString("description"),
-                        re.getLong("instructor_id"),
-                        Category.valueOf(re.getString("category")),
-                        re.getTimestamp("date_created").toLocalDateTime(),
-                        re.getTimestamp("date_modified").toLocalDateTime()
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("instructor_id"),
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
                 );
                 courseList.add(course);
             }
@@ -50,7 +50,7 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public long Save(Course course) throws SQLException {
+    public long save(Course course) throws SQLException {
         String sql = QueryUtil.getQuery("course.save");
         try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setLong(1, course.getInstructorId());
@@ -100,16 +100,16 @@ public class CourseDAO {
 
     /**
      * Find course from database by string literal on title.
-     * @param Keyword
+     * @param keyword
      * @return
      * @throws SQLException
      */
-    public List<Course> findByTitleContaining(String Keyword) throws SQLException {
+    public List<Course> findByTitleContaining(String keyword) throws SQLException {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByTitleContaining");
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, "%" + Keyword + "%");
+            pstmt.setString(1, "%" + keyword + "%");
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -127,4 +127,5 @@ public class CourseDAO {
         }
         return courseList;
     }
+
 }

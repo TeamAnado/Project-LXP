@@ -5,14 +5,14 @@ import com.lxp.course.model.Course;
 import com.lxp.course.service.dto.CourseDetailDto;
 import com.lxp.course.service.dto.CourseListDto;
 import com.lxp.course.service.dto.CreateCourseDto;
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class CourseService {
+
     private final CourseDAO courseDAO;
 
     public CourseService() throws SQLException {
@@ -26,7 +26,7 @@ public class CourseService {
                 dto.instructorId(),
                 dto.category()
         );
-        return courseDAO.Save(course);
+        return courseDAO.save(course);
     }
 
     public List<CourseListDto> findAllCourses() throws SQLException {
@@ -68,9 +68,6 @@ public class CourseService {
                 ))
                 .collect(Collectors.toList());
     }
-
-
-
 
 }
 

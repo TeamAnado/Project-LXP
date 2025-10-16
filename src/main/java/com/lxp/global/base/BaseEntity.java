@@ -1,4 +1,4 @@
-package com.lxp.base;
+package com.lxp.global.base;
 
 public abstract class BaseEntity {
     private Long id;
