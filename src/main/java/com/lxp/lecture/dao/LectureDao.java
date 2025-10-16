@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 
 public class LectureDao {
+
     private final Connection connection;
 
     public LectureDao(Connection connection) {
@@ -21,32 +22,31 @@ public class LectureDao {
     public long save(Lecture lecture) {
         String sql = QueryUtil.getQuery("lecture.save");
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            setLectureParameters(stmt, lecture);
-            return executeAndGetKey(stmt);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            setLectureParameters(pstmt, lecture);
+            return executeAndGetKey(pstmt);
         } catch (SQLException e) {
             throw new LectureNotSavedException(e);
         }
     }
 
-    private void setLectureParameters(PreparedStatement stmt, Lecture lecture) throws SQLException {
-        stmt.setLong(1, lecture.getSectionId());
-        stmt.setString(2, lecture.getTitle());
-        stmt.setString(3, lecture.getDescription());
-        stmt.setTimestamp(4, Timestamp.valueOf(lecture.getDateCreated()));
-        stmt.setTimestamp(5, Timestamp.valueOf(lecture.getDateModified()));
+    private void setLectureParameters(PreparedStatement pstmt, Lecture lecture) throws SQLException {
+        pstmt.setString(1, lecture.getTitle());
+        pstmt.setString(2, lecture.getDescription());
+        pstmt.setTimestamp(3, Timestamp.valueOf(lecture.getDateCreated()));
+        pstmt.setTimestamp(4, Timestamp.valueOf(lecture.getDateModified()));
     }
 
-    private long executeAndGetKey(PreparedStatement stmt) throws SQLException {
-        int affectedRows = stmt.executeUpdate();
+    private long executeAndGetKey(PreparedStatement pstmt) throws SQLException {
+        int affectedRows = pstmt.executeUpdate();
         if (affectedRows == 0) {
             throw new LectureNotSavedException();
         }
-        return getGeneratedKey(stmt);
+        return getGeneratedKey(pstmt);
     }
 
-    private long getGeneratedKey(PreparedStatement stmt) throws SQLException {
-        try (ResultSet rs = stmt.getGeneratedKeys()) {
+    private long getGeneratedKey(PreparedStatement pstmt) throws SQLException {
+        try (ResultSet rs = pstmt.getGeneratedKeys()) {
             if (rs.next()) {
                 return rs.getLong(1);
             } else {
@@ -54,4 +54,5 @@ public class LectureDao {
             }
         }
     }
+
 }

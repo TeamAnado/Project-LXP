@@ -3,22 +3,17 @@ package com.lxp.lecture.model;
 import com.lxp.base.BaseDateModifiedEntity;
 
 public class Lecture extends BaseDateModifiedEntity {
-    private final Long sectionId;
+
     private final String title;
     private final String description;
 
-    private Lecture(Long sectionId, String title, String description) {
-        this.sectionId = sectionId;
+    private Lecture(String title, String description) {
         this.title = title;
         this.description = description;
     }
 
-    public static Lecture of(Long sectionId, String title, String description) {
-        return new Lecture(sectionId, title, description);
-    }
-
-    public Long getSectionId() {
-        return sectionId;
+    public static Lecture of(String title, String description) {
+        return new Lecture(title, description);
     }
 
     public String getTitle() {
@@ -33,4 +28,5 @@ public class Lecture extends BaseDateModifiedEntity {
         this.recordDateCreated();
         this.recordDateModified();
     }
+
 }
