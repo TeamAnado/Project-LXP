@@ -19,6 +19,11 @@ public class CourseService {
         courseDAO = new CourseDAO();
     }
 
+    // Constructor for testing with dependency injection
+    public CourseService(CourseDAO courseDAO) {
+        this.courseDAO = courseDAO;
+    }
+
     public Long createCourse (CreateCourseDto dto) throws SQLException {
         Course course = new Course(
                 dto.title(),
