@@ -8,8 +8,8 @@ public class LectureNotSavedException extends LXPDatabaseAccessException {
         super("강의 저장에 실패했습니다.");
     }
 
-    public LectureNotSavedException(Exception e) {
-        super("강의 저장에 실패했습니다.", e);
+    public LectureNotSavedException(Throwable cause) {
+        super("강의 저장에 실패했습니다.", cause);
     }
 
 }
