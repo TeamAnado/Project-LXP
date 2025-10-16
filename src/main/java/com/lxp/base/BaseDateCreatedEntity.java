@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 public abstract class BaseDateCreatedEntity extends BaseEntity {
     private LocalDateTime dateCreated;
 
-    public BaseDateCreatedEntity() {
+    protected BaseDateCreatedEntity() {
     }
 
-    public BaseDateCreatedEntity(Long id, LocalDateTime dateCreated) {
+    protected BaseDateCreatedEntity(Long id, LocalDateTime dateCreated) {
         super(id);
         this.dateCreated = dateCreated;
     }

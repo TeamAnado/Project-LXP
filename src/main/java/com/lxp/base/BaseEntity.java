@@ -3,10 +3,10 @@ package com.lxp.base;
 public abstract class BaseEntity {
     private Long id;
 
-    public BaseEntity() {
+    protected BaseEntity() {
     }
 
-    public BaseEntity(Long id) {
+    protected BaseEntity(Long id) {
         this.id = id;
     }
 
