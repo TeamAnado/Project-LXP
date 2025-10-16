@@ -17,33 +17,42 @@ public class CourseDAO {
         this.connection = DBConfig.getInstance().getConnection();
     }
 
+    /**
+     * Find every course from database
+     * @return List of course object
+     * @throws SQLException
+     */
     public List<Course> findAll() throws SQLException {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findAll");
 
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet re = pstmt.executeQuery();
-
             while (re.next()) {
                 Course course = new Course(
-                    re.getLong("id"),
-                    re.getString("title"),
-                    re.getString("description"),
-                    re.getTimestamp("date_created").toLocalDateTime(),
-                    re.getTimestamp("date_modified").toLocalDateTime(),
-                    re.getLong("instructor_id"),
-                    Category.valueOf(re.getString("category"))
+                        re.getLong("id"),
+                        re.getString("title"),
+                        re.getString("description"),
+                        re.getLong("instructor_id"),
+                        Category.valueOf(re.getString("category")),
+                        re.getTimestamp("date_created").toLocalDateTime(),
+                        re.getTimestamp("date_modified").toLocalDateTime()
                 );
                 courseList.add(course);
-
             }
         }
         return courseList;
     }
 
+    /**
+     * Save course object
+     * @param course
+     * @return
+     * @throws SQLException
+     */
     public long Save(Course course) throws SQLException {
         String sql = QueryUtil.getQuery("course.save");
-        try(PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setLong(1, course.getInstructorId());
             pstmt.setString(2, course.getTitle());
             pstmt.setString(3, course.getCategory().toString());
@@ -59,36 +68,48 @@ public class CourseDAO {
                 }
             }
         }
-        throw new SQLException();
+        throw new SQLException("Failed to save course on database.");
     }
 
+    /**
+     * Find course from database by id.
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public Course findById(Long id) throws SQLException {
         String sql = QueryUtil.getQuery("course.findById");
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return new Course(
                         rs.getLong("id"),
                         rs.getString("title"),
-                        rs.getString("dscription"),
-                        rs.getTimestamp("date_created").toLocalDateTime(),
-                        rs.getTimestamp("date_modified").toLocalDateTime(),
+                        rs.getString("description"),
                         rs.getLong("instructor_id"),
-                        Category.valueOf(rs.getString("category"))
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
                 );
             }
         }
         return null;
     }
 
+    /**
+     * Find course from database by string literal on title.
+     * @param Keyword
+     * @return
+     * @throws SQLException
+     */
     public List<Course> findByTitleContaining(String Keyword) throws SQLException {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByTitleContaining");
 
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + Keyword + "%");
-
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -96,10 +117,10 @@ public class CourseDAO {
                         rs.getLong("id"),
                         rs.getString("title"),
                         rs.getString("description"),
-                        rs.getTimestamp("date_created").toLocalDateTime(),
-                        rs.getTimestamp("date_modified").toLocalDateTime(),
                         rs.getLong("instructor_id"),
-                        Category.valueOf(rs.getString("category"))
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
                 );
                 courseList.add(course);
             }

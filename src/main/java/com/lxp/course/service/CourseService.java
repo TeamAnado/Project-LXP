@@ -26,11 +26,9 @@ public class CourseService {
                 dto.instructorId(),
                 dto.category()
         );
-
         return courseDAO.Save(course);
     }
 
-    // 전체 목록 조회
     public List<CourseListDto> findAllCourses() throws SQLException {
         List<Course> courses = courseDAO.findAll();
         return courses.stream()
@@ -43,7 +41,6 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    // 단일 조회
     public CourseDetailDto findCourseById(Long id) throws SQLException {
         Course course = courseDAO.findById(id);
         if (course == null) {
@@ -59,9 +56,7 @@ public class CourseService {
         );
     }
 
-    // 강좌명 검색 기능
     public List<CourseListDto> findCourseByTitle(String title) throws SQLException {
-
         List<Course> courses = courseDAO.findByTitleContaining(title);
 
         return courses.stream()
