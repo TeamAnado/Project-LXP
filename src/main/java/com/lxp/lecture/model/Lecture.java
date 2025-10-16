@@ -30,7 +30,7 @@ public class Lecture extends BaseDateModifiedEntity {
     }
 
     public void recordTime() {
-        this.recordCreationTime();
+        this.recordDateCreated();
         this.recordDateModified();
     }
 }

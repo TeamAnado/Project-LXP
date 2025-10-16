@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public abstract class BaseDateCreatedEntity extends BaseEntity {
     private LocalDateTime dateCreated;
 
-    public void recordCreationTime() {
+    public void recordDateCreated() {
         this.dateCreated = LocalDateTime.now();
     }
 
