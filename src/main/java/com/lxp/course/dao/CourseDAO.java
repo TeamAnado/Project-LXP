@@ -233,8 +233,14 @@ public class CourseDAO {
      * @throws SQLException
      */
     public boolean delete(Long id) throws SQLException {
-        // TODO
-        return false;
+        String sql = QueryUtil.getQuery("course.delete");
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        }
     }
 
 }
