@@ -2,12 +2,14 @@ package com.lxp.user.service;
 
 import com.lxp.user.dao.UserDao;
 import com.lxp.user.dao.vo.UserAuthInfo;
+import com.lxp.user.dao.vo.UserInfo;
 import com.lxp.user.exception.InvalidEmailException;
 import com.lxp.user.exception.UserAlreadyExistsException;
 import com.lxp.user.exception.UserNotFoundException;
 import com.lxp.user.model.User;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
 import com.lxp.user.security.PasswordEncoder;
+import com.lxp.user.service.dto.UserFindDto;
 import com.lxp.user.service.dto.UserFindPasswordDto;
 import com.lxp.user.service.dto.UserLoginDto;
 import com.lxp.user.service.dto.UserSaveDto;
@@ -60,6 +62,14 @@ public class UserService {
         } catch (InvalidEmailException | UserNotFoundException e) {
             throw new UserNotFoundException("이메일 또는 비밀번호가 틀렸습니다.");
         }
+    }
+
+    public UserInfo findById(Long id) {
+        return userDao.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserInfo findUser(UserFindDto dto) {
+        return findById(dto.id());
     }
 
     public boolean updatePassword(UserUpdatePasswordDto dto) {

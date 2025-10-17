@@ -1,9 +1,11 @@
 package com.lxp.user.presentation.controller;
 
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
+import com.lxp.user.presentation.controller.request.UserFindRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
 import com.lxp.user.presentation.controller.request.UserSaveRequest;
 import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
+import com.lxp.user.presentation.controller.response.UserFindResponse;
 import com.lxp.user.presentation.controller.response.UserResponse;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
 import com.lxp.user.service.UserService;
@@ -36,6 +38,10 @@ public class UserController {
 
     public boolean updatePassword(UserUpdatePasswordRequest request) {
         return userService.updatePassword(request.to());
+    }
+
+    public UserFindResponse myPage(UserFindRequest request) {
+        return UserFindResponse.from(userService.findUser(request.to()));
     }
 
     public UserResponse login(UserLoginRequest request) {
