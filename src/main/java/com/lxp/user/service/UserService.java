@@ -74,7 +74,7 @@ public class UserService {
     }
 
     public boolean updateUserInfo(UserUpdateInfoDto dto) {
-        if (userDao.existById(dto.id())) {
+        if (!userDao.existById(dto.id())) {
             throw new UserNotFoundException();
         }
         validator.validateUsername(dto.name());

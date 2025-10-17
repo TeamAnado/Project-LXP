@@ -23,7 +23,7 @@ public record UserUpdateInfoRequest(
 
     private void checkUsername() {
         if (isBlank(this.name)) {
-            throw new IllegalArgumentException("새 비밀번호는 필수입니다.");
+            throw new IllegalArgumentException("사용자 이름은 필수입니다.");
         }
     }
 

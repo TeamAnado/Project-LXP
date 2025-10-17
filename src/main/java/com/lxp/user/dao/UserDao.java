@@ -1,5 +1,6 @@
 package com.lxp.user.dao;
 
+import com.lxp.global.config.DBConfig;
 import com.lxp.global.exception.LXPDatabaseAccessException;
 import com.lxp.support.QueryUtil;
 import com.lxp.user.dao.vo.UserAuthInfo;
@@ -17,16 +18,16 @@ import java.util.Optional;
 
 public class UserDao {
 
-    private final Connection connection;
 
-    public UserDao(Connection connection) {
-        this.connection = connection;
+    public UserDao() {
     }
 
     public Optional<UserAuthInfo> findByIdWithPassword(long id) throws LXPDatabaseAccessException {
         String sql = QueryUtil.getQuery("user.findByIdWithPassword");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             return getUserAuthInfo(pstmt);
         } catch (SQLException e) {
@@ -37,7 +38,8 @@ public class UserDao {
     public Optional<UserInfo> findById(long id) throws LXPDatabaseAccessException {
         String sql = QueryUtil.getQuery("user.findById");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             return getUserInfo(pstmt);
         } catch (SQLException e) {
@@ -49,7 +51,8 @@ public class UserDao {
         String sql = QueryUtil.getQuery("user.save");
 
         setDateTimeIfNull(user);
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getName());
@@ -65,7 +68,8 @@ public class UserDao {
     public boolean existByEmail(String email) {
         String sql = QueryUtil.getQuery("user.existByEmail");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
             return existParams(pstmt);
         } catch (SQLException e) {
@@ -76,7 +80,8 @@ public class UserDao {
     public Optional<UserAuthInfo> findByEmail(String email) {
         String sql = QueryUtil.getQuery("user.findByEmail");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
             return getUserAuthInfo(pstmt);
         } catch (SQLException e) {
@@ -87,7 +92,8 @@ public class UserDao {
     public boolean existById(long id) {
         String sql = QueryUtil.getQuery("user.existById");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             return existParams(pstmt);
         } catch (SQLException e) {
@@ -98,7 +104,8 @@ public class UserDao {
     public boolean updatePassword(long id, LocalDateTime dateModified, String hashedPassword) {
         String sql = QueryUtil.getQuery("user.updatePassword");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, hashedPassword);
             pstmt.setTimestamp(2, Timestamp.valueOf(dateModified));
             pstmt.setLong(3, id);
@@ -112,14 +119,15 @@ public class UserDao {
     public boolean updateUser(long id, LocalDateTime dateModified, String name) {
         String sql = QueryUtil.getQuery("user.updateUser");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, name);
             pstmt.setTimestamp(2, Timestamp.valueOf(dateModified));
             pstmt.setLong(3, id);
 
             return isUpdated(pstmt);
         } catch (SQLException e) {
-            throw new LXPDatabaseAccessException("비밀번호 업데이트 중 데이터베이스 오류 발생", e);
+            throw new LXPDatabaseAccessException("사용자 정보 업데이트 중 데이터베이스 오류 발생", e);
         }
     }
 
