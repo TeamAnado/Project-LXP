@@ -1,4 +1,4 @@
-package com.lxp.lecture.dto;
+package com.lxp.lecture.presentation.controller.dto.request;
 
 import com.lxp.lecture.exception.InvalidCourseIdException;
 import com.lxp.lecture.exception.InvalidDescriptionException;
