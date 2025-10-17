@@ -3,6 +3,7 @@ package com.lxp.global.base;
 import java.time.LocalDateTime;
 
 public abstract class BaseDateCreatedEntity extends BaseEntity {
+
     private LocalDateTime dateCreated;
 
     protected BaseDateCreatedEntity() {

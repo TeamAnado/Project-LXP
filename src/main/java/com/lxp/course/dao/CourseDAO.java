@@ -167,8 +167,18 @@ public class CourseDAO {
      * @throws SQLException
      */
     public boolean update(Course course) throws SQLException {
-        // TODO
-        return false;
+        String sql = QueryUtil.getQuery("course.update");
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, course.getInstructorId());
+            pstmt.setString(2, course.getTitle());
+            pstmt.setString(3, course.getCategory().toString());
+            pstmt.setString(4, course.getDescription());
+            pstmt.setLong(5, course.getId());
+
+            int result = pstmt.executeUpdate();
+            return result > 0;
+        }
     }
 
     /**
@@ -179,8 +189,14 @@ public class CourseDAO {
      * @throws SQLException
      */
     public boolean delete(Long id) throws SQLException {
-        // TODO
-        return false;
+        String sql = QueryUtil.getQuery("course.delete");
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+
+            int result = pstmt.executeUpdate();
+            return result > 0;
+        }
     }
 
     /**
