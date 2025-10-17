@@ -2,8 +2,10 @@ package com.lxp.user.presentation.controller;
 
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
+import com.lxp.user.presentation.controller.request.UserSaveRequest;
 import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
 import com.lxp.user.presentation.controller.response.UserResponse;
+import com.lxp.user.presentation.controller.response.UserSaveResponse;
 import com.lxp.user.service.UserService;
 
 public class UserController {
@@ -14,14 +16,18 @@ public class UserController {
         this.userService = userService;
     }
 
+    public UserSaveResponse register(UserSaveRequest request) {
+        return userService.register(request.to());
+    }
+
     /**
-     * 비밀번호 찾는 기능 중 assert
+     * 비밀번호 찾는 기능 중 이메일이 있는지 확인
      *
      * @param email
      * @return
      */
-    public boolean checkUserExistence(String email) {
-        return userService.isExistUser(email);
+    public UserResponse checkUserExistence(String email) {
+        return UserResponse.from(userService.findByEmail(email));
     }
 
     public boolean resetPassword(UserFindPasswordRequest request) {

@@ -7,6 +7,7 @@ import com.lxp.user.presentation.controller.request.UserLoginRequest;
 import com.lxp.user.security.PasswordEncoder;
 import com.lxp.user.service.UserService;
 import com.lxp.user.service.validator.UserValidator;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -37,7 +38,8 @@ public class UserLoginTest {
     private UserService userService;
 
     @Test
-    public void 로그인_성공_로직() {
+    @DisplayName("유효한 이메일과 비밀번호를 입력하면 인증 정보가 반환되며 로그인이 성공한다")
+    public void should_login_successfully_when_credentials_are_valid() {
         String username = "test";
         String email = "test@test.com";
         String password = "test123@1A";

@@ -5,7 +5,9 @@ import com.lxp.exception.LXPExceptionHandler;
 import com.lxp.user.presentation.controller.UserController;
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
+import com.lxp.user.presentation.controller.request.UserSaveRequest;
 import com.lxp.user.presentation.controller.response.UserResponse;
+import com.lxp.user.presentation.controller.response.UserSaveResponse;
 
 import java.util.Scanner;
 
@@ -33,14 +35,14 @@ public class UserView {
                 int n = Integer.parseInt(answer);
 
                 return switch (n) {
-                    case 1 -> {
-                        UserResponse userResponse = processLogin();
-                        userId = userResponse.id();
-                        yield userResponse;
+                    case 1 -> handleLoginAndSetId();
+                    case 2 -> {
+                        register();
+                        yield handleLoginAndSetId();
                     }
                     case 3 -> {
                         findPassword(userId);
-                        yield new UserResponse(userId);
+                        yield handleLoginAndSetId();
                     }
                     case 4 -> UserResponse.empty();
                     default -> throw new LXPException("Unexpected value: " + n);
@@ -56,19 +58,33 @@ public class UserView {
         return scanner.nextLine();
     }
 
+    public void register() {
+        System.out.println("=== 회원가입 ===");
+        System.out.print("이름: ");
+        String name = scanner.nextLine();
+        System.out.print("이메일: ");
+        String email = scanner.nextLine();
+        System.out.print("비밀번호: ");
+        String password = scanner.nextLine();
+
+        UserSaveResponse register = userController.register(new UserSaveRequest(name, email, password));
+        System.out.println(register.name() + "(" + register.email() + ")님 가입을 환영합니다.");
+    }
+
     public boolean findPassword(Long id) {
         System.out.println("=== 비밀번호 찾기 ===");
         System.out.print("아이디(이메일): ");
         String email = scanner.nextLine();
 
-        if (!userController.checkUserExistence(email)) {
+        UserResponse userResponse = userController.checkUserExistence(email);
+        if (userResponse.isEmpty()) {
             System.out.println("잘못된 이메일입니다.");
             return false;
         }
 
         System.out.print("새 비밀번호: ");
         String newPassword = scanner.nextLine();
-        userController.resetPassword(new UserFindPasswordRequest(id, newPassword));
+        userController.resetPassword(new UserFindPasswordRequest(userResponse.id(), newPassword));
         return true;
     }
 
@@ -80,5 +96,11 @@ public class UserView {
         String password = scanner.nextLine();
 
         return userController.login(new UserLoginRequest(id, password));
+    }
+
+    private UserResponse handleLoginAndSetId() {
+        UserResponse userResponse = processLogin();
+        userId = userResponse.id();
+        return userResponse;
     }
 }

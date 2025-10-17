@@ -1,7 +1,7 @@
 package com.lxp.user.service.dto;
 
 public record UserFindPasswordDto(
-    Long id,
+    long id,
     String newPassword
 ) {
 

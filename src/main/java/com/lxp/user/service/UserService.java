@@ -14,6 +14,7 @@ import com.lxp.user.service.dto.UserSaveDto;
 import com.lxp.user.service.dto.UserUpdatePasswordDto;
 import com.lxp.user.service.validator.UserValidator;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class UserService {
@@ -61,13 +62,6 @@ public class UserService {
         }
     }
 
-    public boolean isExistUser(String email) {
-        Objects.requireNonNull(email, "request must not be null");
-
-        validator.validateEmail(email);
-        return userDao.existByEmail(email);
-    }
-
     public boolean updatePassword(UserUpdatePasswordDto dto) {
         Objects.requireNonNull(dto, "request must not be null");
 
@@ -77,7 +71,7 @@ public class UserService {
         validator.validatePassword(dto.newPassword());
 
         String hashedPassword = encoder.encode(dto.newPassword());
-        return userDao.updatePassword(dto.id(), hashedPassword);
+        return userDao.updatePassword(dto.id(), LocalDateTime.now(), hashedPassword);
     }
 
     public boolean resetPassword(UserFindPasswordDto dto) {
@@ -87,7 +81,7 @@ public class UserService {
         validator.validatePassword(dto.newPassword());
 
         String hashedPassword = encoder.encode(dto.newPassword());
-        return userDao.updatePassword(dto.id(), hashedPassword);
+        return userDao.updatePassword(dto.id(), LocalDateTime.now(), hashedPassword);
     }
 
     private void validateRegister(UserSaveDto dto) {

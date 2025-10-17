@@ -10,6 +10,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 public class UserDao {
@@ -34,12 +36,13 @@ public class UserDao {
     public void save(User user) {
         String sql = QueryUtil.getQuery("user.save");
 
+        setDateTimeIfNull(user);
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, user.getEmail());
             pstmt.setString(2, user.getPassword());
             pstmt.setString(3, user.getName());
-            pstmt.setObject(4, user.getDateCreated());
-            pstmt.setObject(5, user.getDateModified());
+            pstmt.setTimestamp(4, Timestamp.valueOf(user.getDateCreated()));
+            pstmt.setTimestamp(5, Timestamp.valueOf(user.getDateModified()));
 
             pstmt.executeUpdate();
         } catch (SQLException e) {
@@ -80,12 +83,13 @@ public class UserDao {
         }
     }
 
-    public boolean updatePassword(long id, String hashedPassword) {
+    public boolean updatePassword(long id, LocalDateTime dateModified, String hashedPassword) {
         String sql = QueryUtil.getQuery("user.updatePassword");
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, hashedPassword);
-            pstmt.setLong(2, id);
+            pstmt.setTimestamp(2, Timestamp.valueOf(dateModified));
+            pstmt.setLong(3, id);
 
             return isUpdated(pstmt);
         } catch (SQLException e) {
@@ -116,4 +120,11 @@ public class UserDao {
     private boolean isUpdated(PreparedStatement pstmt) throws SQLException {
         return pstmt.executeUpdate() > 0;
     }
+
+    private void setDateTimeIfNull(User user) {
+        if (user.getDateCreated() == null || user.getDateModified() == null) {
+            user.recordTime();
+        }
+    }
+
 }

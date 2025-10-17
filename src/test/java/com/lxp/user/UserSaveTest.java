@@ -7,6 +7,7 @@ import com.lxp.user.presentation.controller.response.UserSaveResponse;
 import com.lxp.user.security.PasswordEncoder;
 import com.lxp.user.service.UserService;
 import com.lxp.user.service.validator.UserValidator;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -36,7 +37,8 @@ public class UserSaveTest {
     private UserService userService;
 
     @Test
-    public void 회원가입_성공_로직() {
+    @DisplayName("유효한 정보를 입력하면 회원가입이 성공하고 사용자 정보가 반환된다")
+    public void should_register_successfully_when_input_is_valid() {
         String username = "test";
         String email = "test@test.com";
         String password = "test123@1A";

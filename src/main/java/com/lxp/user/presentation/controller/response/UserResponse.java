@@ -12,4 +12,7 @@ public record UserResponse(Long id) {
         return new UserResponse(info.id());
     }
 
+    public boolean isEmpty() {
+        return id == null;
+    }
 }
