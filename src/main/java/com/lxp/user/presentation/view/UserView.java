@@ -1,7 +1,7 @@
 package com.lxp.user.presentation.view;
 
-import com.lxp.exception.LXPException;
-import com.lxp.exception.LXPExceptionHandler;
+import com.lxp.global.exception.LXPException;
+import com.lxp.global.exception.LXPExceptionHandler;
 import com.lxp.user.presentation.controller.UserController;
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserFindRequest;
