@@ -12,7 +12,7 @@ public abstract class BaseDateCreatedEntity extends BaseEntity {
         super(id);
         this.dateCreated = dateCreated;
     }
-
+    
     public void recordDateCreated() {
         this.dateCreated = LocalDateTime.now();
     }
