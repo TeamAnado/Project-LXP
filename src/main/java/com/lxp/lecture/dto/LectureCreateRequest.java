@@ -21,7 +21,7 @@ public record LectureCreateRequest(
     }
 
     private void validateCourseId(Long courseId) {
-        if (courseId == null || 0 <= courseId) {
+        if (courseId == null || courseId <= 0) {
             throw new InvalidCourseIdException();
         }
     }
