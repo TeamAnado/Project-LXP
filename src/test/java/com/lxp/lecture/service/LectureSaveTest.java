@@ -2,6 +2,7 @@ package com.lxp.lecture.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -17,6 +18,7 @@ import com.lxp.lecture.exception.LectureNotSavedException;
 import com.lxp.lecture.model.Lecture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 class LectureSaveTest {
     private final LectureDao mockLectureDao = mock(LectureDao.class);
@@ -43,8 +45,18 @@ class LectureSaveTest {
 
         // then
         verify(mockCourseDao, times(1)).existsById(courseId);
-        verify(mockLectureDao, times(1)).save(any(Lecture.class));
-        assertThat(response.id()).isEqualTo(lectureId);
+        ArgumentCaptor<Lecture> captor = ArgumentCaptor.forClass(Lecture.class);
+
+        verify(mockLectureDao, times(1)).save(captor.capture());
+        Lecture saved = captor.getValue();
+
+        assertAll(
+                () -> assertThat(saved.getCourseId()).isEqualTo(courseId),
+                () -> assertThat(saved.getTitle()).isEqualTo(title),
+                () -> assertThat(saved.getDescription()).isEqualTo(description),
+                () -> assertThat(saved.getPath()).isEqualTo(path),
+                () -> assertThat(response.id()).isEqualTo(lectureId)
+        );
     }
 
     @Test

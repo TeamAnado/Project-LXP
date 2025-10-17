@@ -18,10 +18,12 @@ class LectureCreateRequestTest {
         return Stream.of(
                 Arguments.of(null, "Valid Title", "Valid Description", "Valid Path", "코스 ID는 null이거나 0 이하일 수 없습니다."),
                 Arguments.of(0L, "Valid Title", "Valid Description", "Valid Path", "코스 ID는 null이거나 0 이하일 수 없습니다."),
+                Arguments.of(-1L, "Valid Title", "Valid Description", "Valid Path", "코스 ID는 null이거나 0 이하일 수 없습니다."),
                 Arguments.of(1L, null, "Valid Description", "Valid Path", "강의 제목은 비어 있을 수 없습니다."),
                 Arguments.of(1L, "  ", "Valid Description", "Valid Path", "강의 제목은 비어 있을 수 없습니다."),
                 Arguments.of(1L, "Valid Title", null, "Valid Path", "강의 설명은 비어 있을 수 없습니다."),
                 Arguments.of(1L, "Valid Title", "  ", "Valid Path", "강의 설명은 비어 있을 수 없습니다."),
+                Arguments.of(1L, "Valid Title", "Valid Description", null, "경로는 비어 있을 수 없습니다."),
                 Arguments.of(1L, "Valid Title", "Valid Description", "  ", "경로는 비어 있을 수 없습니다.")
         );
     }
