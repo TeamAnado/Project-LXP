@@ -1,4 +1,4 @@
-package com.lxp.exception;
+package com.lxp.global.exception;
 
 public class LXPDatabaseAccessException extends LXPException {
 
