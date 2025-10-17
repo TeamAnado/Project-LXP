@@ -22,10 +22,10 @@ import static com.lxp.support.StringUtils.isBlank;
  */
 public class UserView {
 
-    private Long currentUserId;
-
     private final UserController userController;
     private final Scanner scanner;
+
+    private Long currentUserId;
 
     public UserView(UserController userController, Scanner scanner) {
         this.userController = userController;
@@ -100,14 +100,17 @@ public class UserView {
         while (true) {
             try {
                 String answer = displayMenuAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기");
-                if (answer.equals("1")) {
-
-                } else if (answer.equals("2")) {
+                int n = Integer.parseInt(answer);
+                if (n == 1) {
+                    //TODO 구현 준비중
+                } else if (n == 2) {
                     handlePasswordUpdate();
-                } else if (answer.equals("3")) {
+                } else if (n == 3) {
                     printMyPage();
-                } else if (answer.equals("4")) {
+                } else if (n == 4) {
                     break;
+                } else {
+                    System.out.println("잘못된 입력입니다. 메뉴를 다시 선택해주세요.");
                 }
             } catch (Exception e) {
                 LXPExceptionHandler.handle(e);
