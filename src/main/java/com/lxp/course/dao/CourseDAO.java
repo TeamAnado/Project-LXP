@@ -18,34 +18,7 @@ public class CourseDAO {
     }
 
     /**
-     * Find every course from database
-     * @return List of course object
-     * @throws SQLException
-     */
-    public List<Course> findAll() throws SQLException {
-        List<Course> courseList = new ArrayList<>();
-        String sql = QueryUtil.getQuery("course.findAll");
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                Course course = new Course(
-                        rs.getLong("id"),
-                        rs.getString("title"),
-                        rs.getString("description"),
-                        rs.getLong("instructor_id"),
-                        Category.valueOf(rs.getString("category")),
-                        rs.getTimestamp("date_created").toLocalDateTime(),
-                        rs.getTimestamp("date_modified").toLocalDateTime()
-                );
-                courseList.add(course);
-            }
-        }
-        return courseList;
-    }
-
-    /**
-     * Save course object
+     * Save course to database
      * @param course
      * @return
      * @throws SQLException
@@ -72,7 +45,34 @@ public class CourseDAO {
     }
 
     /**
-     * Find course from database by id.
+     * Find all courses from database
+     * @return
+     * @throws SQLException
+     */
+    public List<Course> findAll() throws SQLException {
+        List<Course> courseList = new ArrayList<>();
+        String sql = QueryUtil.getQuery("course.findAll");
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            ResultSet rs = pstmt.executeQuery();
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("instructor_id"),
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
+                );
+                courseList.add(course);
+            }
+        }
+        return courseList;
+    }
+
+    /**
+     * Find course from database by id
      * @param id
      * @return
      * @throws SQLException
@@ -99,7 +99,7 @@ public class CourseDAO {
     }
 
     /**
-     * Find course from database by string literal on title.
+     * Find courses from database by title keyword
      * @param keyword
      * @return
      * @throws SQLException
@@ -128,4 +128,51 @@ public class CourseDAO {
         return courseList;
     }
 
-}
+    /**
+     * Find courses from database by category
+     * @param category
+     * @return
+     * @throws SQLException
+     */
+    public List<Course> findByCategory(Category category) throws SQLException {
+        List<Course> courseList = new ArrayList<>();
+        // TODO
+        return courseList;
+    }
+
+    /**
+     * Find courses from database by instructor id
+     * @param instructorId
+     * @return
+     * @throws SQLException
+     */
+    public List<Course> findByInstructorId(Long instructorId) throws SQLException {
+        // TODO
+        return null;
+    }
+
+    /**
+     * Update course in database
+     * @param course
+     * @return
+     * @throws SQLException
+     */
+    public boolean update(Course course) throws SQLException {
+        // TODO
+        return false;
+    }
+
+    /**
+     * Delete course from database by id
+     * @param id
+     * @return
+     * @throws SQLException
+     */
+    public boolean delete(Long id) throws SQLException {
+        // TODO
+        return false;
+    }
+
+        // TODO
+        return false;
+    }
