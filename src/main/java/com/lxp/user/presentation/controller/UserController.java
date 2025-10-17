@@ -28,7 +28,7 @@ public class UserController {
      * @param email
      * @return
      */
-    public UserResponse checkUserExistence(String email) {
+    public UserResponse getUserByEmailResponse(String email) {
         return UserResponse.from(userService.findByEmail(email));
     }
 

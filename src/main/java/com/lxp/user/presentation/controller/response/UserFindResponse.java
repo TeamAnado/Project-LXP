@@ -12,4 +12,9 @@ public record UserFindResponse(
         return new UserFindResponse(info.id(), info.name(), info.email());
     }
 
+    @Override
+    public String toString() {
+        return "이름: " + name + '\n' + "이메일: " + email + '\n';
+    }
+
 }

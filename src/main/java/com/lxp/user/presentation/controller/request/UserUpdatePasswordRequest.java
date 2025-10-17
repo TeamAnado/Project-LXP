@@ -13,7 +13,7 @@ public record UserUpdatePasswordRequest(
     public UserUpdatePasswordDto to() {
         checkId();
         checkPassword();
-        return new UserUpdatePasswordDto(id, this.oldPassword, this.newPassword);
+        return new UserUpdatePasswordDto(this.id, this.oldPassword, this.newPassword);
     }
 
     private void checkId() {

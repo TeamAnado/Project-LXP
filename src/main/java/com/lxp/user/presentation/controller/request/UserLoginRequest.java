@@ -8,7 +8,7 @@ public record UserLoginRequest(
 ) {
 
     public UserLoginDto to() {
-        return new UserLoginDto(this.email(), this.password());
+        return new UserLoginDto(this.email, this.password);
     }
 
 }
