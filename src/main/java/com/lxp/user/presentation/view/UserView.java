@@ -1,5 +1,6 @@
 package com.lxp.user.presentation.view;
 
+import com.lxp.global.context.SessionContext;
 import com.lxp.global.exception.LXPException;
 import com.lxp.global.exception.LXPExceptionHandler;
 import com.lxp.user.presentation.controller.UserController;
@@ -7,6 +8,7 @@ import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserFindRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
 import com.lxp.user.presentation.controller.request.UserSaveRequest;
+import com.lxp.user.presentation.controller.request.UserUpdateInfoRequest;
 import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
 import com.lxp.user.presentation.controller.response.UserFindResponse;
 import com.lxp.user.presentation.controller.response.UserResponse;
@@ -25,8 +27,6 @@ public class UserView {
     private final UserController userController;
     private final Scanner scanner;
 
-    private Long currentUserId;
-
     public UserView(UserController userController, Scanner scanner) {
         this.userController = userController;
         this.scanner = scanner;
@@ -41,7 +41,7 @@ public class UserView {
     public UserResponse loginAndRegister() {
         while (true) {
             try {
-                int n = Integer.parseInt(displayMenuAndGetInput("1.로그인, 2.회원가입, 3. 비밀번호 찾기, 4. 뒤로가기: "));
+                int n = Integer.parseInt(displayAndGetInput("1.로그인, 2.회원가입, 3. 비밀번호 찾기, 4. 뒤로가기: "));
 
                 return switch (n) {
                     case 1 -> handleLoginAndSetId();
@@ -50,7 +50,10 @@ public class UserView {
                         yield handleLoginAndSetId();
                     }
                     case 3 -> {
-                        handlePasswordFind();
+                        if (!handlePasswordFind()) {
+                            System.out.println("비밀번호 찾기 실패");
+                            yield UserResponse.empty();
+                        }
                         yield handleLoginAndSetId();
                     }
                     case 4 -> UserResponse.empty();
@@ -68,7 +71,7 @@ public class UserView {
     public void showLoginUser() {
         while (true) {
             try {
-                int n = Integer.parseInt(displayMenuAndGetInput("1.로그아웃, 2.마이페이지"));
+                int n = Integer.parseInt(displayAndGetInput("1.로그아웃, 2.마이페이지"));
 
                 if (n == 1) {
                     logout();
@@ -88,7 +91,7 @@ public class UserView {
      * 현재 로그인 상태를 해제하고 사용자 ID를 초기화합니다.
      */
     public void logout() {
-        this.currentUserId = null;
+        SessionContext.getInstance().clear();
     }
 
     /**
@@ -105,12 +108,14 @@ public class UserView {
     public void runMyPageFunction() {
         while (true) {
             try {
-                String answer = displayMenuAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기");
+                String answer = displayAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기");
                 int n = Integer.parseInt(answer);
                 if (n == 1) {
-                    //TODO 구현 준비중
+                    handleUserUpdate();
                 } else if (n == 2) {
-                    handlePasswordUpdate();
+                    if (!handlePasswordUpdate()) {
+                        System.out.println("비밀번호 변경에 실패하였습니다.");
+                    }
                 } else if (n == 3) {
                     printMyPage();
                 } else if (n == 4) {
@@ -132,7 +137,7 @@ public class UserView {
      * @return String 사용자가 입력한 문자열
      * @throws LXPException 입력이 공백일 경우
      */
-    public String displayMenuAndGetInput(String message) {
+    public String displayAndGetInput(String message) {
         System.out.print(message);
         String answer = scanner.nextLine();
         if (isBlank(answer)) {
@@ -141,17 +146,24 @@ public class UserView {
         return answer;
     }
 
+    public void handleUserUpdate() {
+        String newName = displayAndGetInput("새로운 이름:");
+
+        boolean flag = userController.updateUsername(new UserUpdateInfoRequest(SessionContext.getInstance().getUserId(), newName));
+        if (!flag) {
+            System.out.println("실패하였습니다");
+        }
+    }
+
     /**
      * 사용자로부터 이름, 이메일, 비밀번호를 입력받아 회원가입을 처리하고 결과를 출력합니다.
      */
     public void handleRegister() {
         System.out.println("=== 회원가입 ===");
-        System.out.print("이름: ");
-        String name = scanner.nextLine();
-        System.out.print("이메일: ");
-        String email = scanner.nextLine();
-        System.out.print("비밀번호: ");
-        String password = scanner.nextLine();
+
+        String name = displayAndGetInput("이름: ");
+        String email = displayAndGetInput("이메일: ");
+        String password = displayAndGetInput("비밀번호: ");
 
         UserSaveResponse register = userController.register(new UserSaveRequest(name, email, password));
         System.out.println(register.name() + "(" + register.email() + ")님 가입을 환영합니다.");
@@ -164,8 +176,7 @@ public class UserView {
      */
     public boolean handlePasswordFind() {
         System.out.println("=== 비밀번호 찾기 ===");
-        System.out.print("아이디(이메일): ");
-        String email = scanner.nextLine();
+        String email = displayAndGetInput("아이디(이메일): ");
 
         UserResponse userResponse = userController.getUserByEmailResponse(email);
         if (userResponse.isEmpty()) {
@@ -173,10 +184,8 @@ public class UserView {
             return false;
         }
 
-        System.out.print("새 비밀번호: ");
-        String newPassword = scanner.nextLine();
-        userController.resetPassword(new UserFindPasswordRequest(userResponse.id(), newPassword));
-        return true;
+        String newPassword = displayAndGetInput("새 비밀번호: ");
+        return userController.resetPassword(new UserFindPasswordRequest(userResponse.id(), newPassword));
     }
 
     /**
@@ -187,13 +196,10 @@ public class UserView {
     public boolean handlePasswordUpdate() {
         System.out.println("=== 비밀번호 변경 ===");
 
-        System.out.print("기존 비밀번호: ");
-        String oldPassword = scanner.nextLine();
+        String oldPassword = displayAndGetInput("기존 비밀번호: ");
+        String newPassword = displayAndGetInput("새 비밀번호: ");
 
-        System.out.print("새 비밀번호: ");
-        String newPassword = scanner.nextLine();
-
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(this.currentUserId, oldPassword, newPassword);
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(SessionContext.getInstance().getUserId(), oldPassword, newPassword);
         return userController.updatePassword(request);
     }
 
@@ -204,12 +210,10 @@ public class UserView {
      */
     public UserResponse processLogin() {
         System.out.println("=== 로그인 ===");
-        System.out.print("아이디(이메일): ");
-        String id = scanner.nextLine();
-        System.out.print("비밀번호: ");
-        String password = scanner.nextLine();
+        String email = displayAndGetInput("아이디(이메일): ");
+        String password = displayAndGetInput("비밀번호: ");
 
-        return userController.login(new UserLoginRequest(id, password));
+        return userController.login(new UserLoginRequest(email, password));
     }
 
     /**
@@ -217,7 +221,7 @@ public class UserView {
      */
     private void printMyPage() {
         System.out.println("=== 마이 페이지 ===");
-        UserFindRequest request = new UserFindRequest(this.currentUserId);
+        UserFindRequest request = new UserFindRequest(SessionContext.getInstance().getUserId());
         UserFindResponse response = userController.myPage(request);
         System.out.println(response.toString());
     }
@@ -230,9 +234,10 @@ public class UserView {
     private UserResponse handleLoginAndSetId() {
         UserResponse userResponse = processLogin();
         if (userResponse.isEmpty()) {
-            throw new LXPException("로그인 실패");
+            System.out.println("로그인 정보가 올바르지 않습니다.");
+            return UserResponse.empty();
         }
-        this.currentUserId = userResponse.id();
+        SessionContext.getInstance().setUserId(userResponse.id());
         return userResponse;
     }
 }

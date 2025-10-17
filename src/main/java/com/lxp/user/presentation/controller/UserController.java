@@ -4,6 +4,7 @@ import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserFindRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
 import com.lxp.user.presentation.controller.request.UserSaveRequest;
+import com.lxp.user.presentation.controller.request.UserUpdateInfoRequest;
 import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
 import com.lxp.user.presentation.controller.response.UserFindResponse;
 import com.lxp.user.presentation.controller.response.UserResponse;
@@ -30,6 +31,10 @@ public class UserController {
      */
     public UserResponse getUserByEmailResponse(String email) {
         return UserResponse.from(userService.findByEmail(email));
+    }
+
+    public boolean updateUsername(UserUpdateInfoRequest request) {
+        return userService.updateUserInfo(request.to());
     }
 
     public boolean resetPassword(UserFindPasswordRequest request) {

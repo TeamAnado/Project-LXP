@@ -13,6 +13,7 @@ import com.lxp.user.service.dto.UserFindDto;
 import com.lxp.user.service.dto.UserFindPasswordDto;
 import com.lxp.user.service.dto.UserLoginDto;
 import com.lxp.user.service.dto.UserSaveDto;
+import com.lxp.user.service.dto.UserUpdateInfoDto;
 import com.lxp.user.service.dto.UserUpdatePasswordDto;
 import com.lxp.user.service.validator.UserValidator;
 
@@ -70,6 +71,14 @@ public class UserService {
 
     public UserInfo findUser(UserFindDto dto) {
         return findById(dto.id());
+    }
+
+    public boolean updateUserInfo(UserUpdateInfoDto dto) {
+        if (userDao.existById(dto.id())) {
+            throw new UserNotFoundException();
+        }
+        validator.validateUsername(dto.name());
+        return userDao.updateUser(dto.id(), LocalDateTime.now(), dto.name());
     }
 
     public boolean updatePassword(UserUpdatePasswordDto dto) {

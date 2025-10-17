@@ -109,6 +109,20 @@ public class UserDao {
         }
     }
 
+    public boolean updateUser(long id, LocalDateTime dateModified, String name) {
+        String sql = QueryUtil.getQuery("user.updateUser");
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            pstmt.setTimestamp(2, Timestamp.valueOf(dateModified));
+            pstmt.setLong(3, id);
+
+            return isUpdated(pstmt);
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("비밀번호 업데이트 중 데이터베이스 오류 발생", e);
+        }
+    }
+
     private boolean existParams(PreparedStatement pstmt) throws SQLException {
         try (ResultSet rs = pstmt.executeQuery()) {
             return rs.next() && rs.getInt(1) > 0;
