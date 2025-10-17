@@ -67,13 +67,19 @@ public class UserView {
      */
     public void showLoginUser() {
         while (true) {
-            int n = Integer.parseInt(displayMenuAndGetInput("1.로그아웃, 2.마이페이지"));
+            try {
+                int n = Integer.parseInt(displayMenuAndGetInput("1.로그아웃, 2.마이페이지"));
 
-            if (n == 1) {
-                logout();
-                return;
-            } else if (n == 2) {
-                showMyPage();
+                if (n == 1) {
+                    logout();
+                    return;
+                } else if (n == 2) {
+                    showMyPage();
+                } else {
+                    System.out.println("잘못된 입력입니다. 메뉴를 다시 선택해주세요.");
+                }
+            } catch (Exception e) {
+                LXPExceptionHandler.handle(e);
             }
         }
     }
@@ -223,6 +229,9 @@ public class UserView {
      */
     private UserResponse handleLoginAndSetId() {
         UserResponse userResponse = processLogin();
+        if (userResponse.isEmpty()) {
+            throw new LXPException("로그인 실패");
+        }
         this.currentUserId = userResponse.id();
         return userResponse;
     }
