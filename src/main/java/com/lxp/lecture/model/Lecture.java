@@ -1,6 +1,6 @@
 package com.lxp.lecture.model;
 
-import com.lxp.base.BaseDateModifiedEntity;
+import com.lxp.global.base.BaseDateModifiedEntity;
 
 public class Lecture extends BaseDateModifiedEntity {
 

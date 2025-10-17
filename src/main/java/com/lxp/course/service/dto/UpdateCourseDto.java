@@ -6,6 +6,5 @@ public record UpdateCourseDto(
         Long id,
         String title,
         String description,
-        Long instructorId,
         Category category
 ) {}

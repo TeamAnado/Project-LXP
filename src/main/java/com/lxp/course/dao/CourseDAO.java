@@ -175,7 +175,7 @@ public class CourseDAO {
             pstmt.setString(3, course.getCategory().toString());
             pstmt.setString(4, course.getDescription());
             pstmt.setLong(5, course.getId());
-
+            pstmt.setTimestamp(7, Timestamp.valueOf(course.getDateModified()));
             int result = pstmt.executeUpdate();
             return result > 0;
         }
