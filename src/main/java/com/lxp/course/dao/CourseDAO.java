@@ -12,27 +12,28 @@ import java.util.List;
 
 public class CourseDAO {
 
-    private final Connection connection;
+//    private final Connection connection;
 
-    public CourseDAO() throws SQLException {
-        this.connection = DBConfig.getInstance().getConnection();
+    public CourseDAO() {
     }
 
     /**
      * Save course to database
+     *
      * @param course
      * @return
      * @throws SQLException
      */
     public long save(Course course) throws SQLException {
         String sql = QueryUtil.getQuery("course.save");
-        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setLong(1, course.getInstructorId());
             pstmt.setString(2, course.getTitle());
             pstmt.setString(3, course.getCategory().toString());
             pstmt.setString(4, course.getDescription());
-            pstmt.setString(5, course.getDateCreated().toString());
-            pstmt.setString(6, course.getDateModified().toString());
+            pstmt.setTimestamp(5, Timestamp.valueOf(course.getDateCreated()));
+            pstmt.setTimestamp(6, Timestamp.valueOf(course.getDateModified()));
             int result = pstmt.executeUpdate();
             if (result > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -47,6 +48,7 @@ public class CourseDAO {
 
     /**
      * Find all courses from database
+     *
      * @return
      * @throws SQLException
      */
@@ -54,7 +56,8 @@ public class CourseDAO {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findAll");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(
@@ -74,6 +77,7 @@ public class CourseDAO {
 
     /**
      * Find course from database by id
+     *
      * @param id
      * @return
      * @throws SQLException
@@ -81,7 +85,8 @@ public class CourseDAO {
     public Course findById(Long id) throws SQLException {
         String sql = QueryUtil.getQuery("course.findById");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -101,6 +106,7 @@ public class CourseDAO {
 
     /**
      * Find courses from database by title keyword
+     *
      * @param keyword
      * @return
      * @throws SQLException
@@ -109,7 +115,8 @@ public class CourseDAO {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByTitleContaining");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + keyword + "%");
             ResultSet rs = pstmt.executeQuery();
 
@@ -131,6 +138,7 @@ public class CourseDAO {
 
     /**
      * Find courses from database by category
+     *
      * @param category
      * @return
      * @throws SQLException
@@ -138,33 +146,88 @@ public class CourseDAO {
     public List<Course> findByCategory(Category category) throws SQLException {
         List<Course> courseList = new ArrayList<>();
         // TODO
+        String sql = QueryUtil.getQuery("course.findByCategory");
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, category.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("instructor_id"),
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
+                );
+                courseList.add(course);
+            }
+        }
         return courseList;
     }
 
     /**
      * Find courses from database by instructor id
+     *
      * @param instructorId
      * @return
      * @throws SQLException
      */
     public List<Course> findByInstructorId(Long instructorId) throws SQLException {
         // TODO
-        return null;
+        List<Course> courseList = new ArrayList<>();
+        String sql = QueryUtil.getQuery("course.findByInstructorId");
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, instructorId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("instructor_id"),
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
+                );
+                courseList.add(course);
+            }
+        }
+        return courseList;
     }
 
     /**
      * Update course in database
+     *
      * @param course
      * @return
      * @throws SQLException
      */
     public boolean update(Course course) throws SQLException {
         // TODO
-        return false;
+        String sql = QueryUtil.getQuery("course.update");
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, course.getTitle());
+            pstmt.setString(2, course.getDescription());
+            pstmt.setString(3, course.getCategory().toString());
+            pstmt.setTimestamp(4, Timestamp.valueOf(LocalDateTime.now()));
+            pstmt.setLong(5, course.getId());
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        }
     }
 
     /**
      * Delete course from database by id
+     *
      * @param id
      * @return
      * @throws SQLException
@@ -174,6 +237,4 @@ public class CourseDAO {
         return false;
     }
 
-        // TODO
-        return false;
-    }
+}

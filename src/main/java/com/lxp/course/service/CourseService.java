@@ -15,10 +15,6 @@ public class CourseService {
 
     private final CourseDAO courseDAO;
 
-    public CourseService(CourseDAO courseDAO) {
-        this.courseDAO = courseDAO;
-    }
-
     // Constructor for testing with dependency injection
     public CourseService(CourseDAO courseDAO) {
         this.courseDAO = courseDAO;
