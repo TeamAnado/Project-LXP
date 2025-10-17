@@ -19,6 +19,7 @@ public class CourseDAO {
 
     /**
      * Save course to database
+     *
      * @param course
      * @return
      * @throws SQLException
@@ -30,8 +31,9 @@ public class CourseDAO {
             pstmt.setString(2, course.getTitle());
             pstmt.setString(3, course.getCategory().toString());
             pstmt.setString(4, course.getDescription());
-            pstmt.setString(5, course.getDateCreated().toString());
-            pstmt.setString(6, course.getDateModified().toString());
+            pstmt.setTimestamp(5, Timestamp.valueOf(course.getDateCreated()));
+            pstmt.setTimestamp(6, Timestamp.valueOf(course.getDateModified()));
+
             int result = pstmt.executeUpdate();
             if (result > 0) {
                 try (ResultSet rs = pstmt.getGeneratedKeys()) {
@@ -46,6 +48,7 @@ public class CourseDAO {
 
     /**
      * Find all courses from database
+     *
      * @return
      * @throws SQLException
      */
@@ -73,6 +76,7 @@ public class CourseDAO {
 
     /**
      * Find course from database by id
+     *
      * @param id
      * @return
      * @throws SQLException
@@ -100,6 +104,7 @@ public class CourseDAO {
 
     /**
      * Find courses from database by title keyword
+     *
      * @param keyword
      * @return
      * @throws SQLException
@@ -130,6 +135,7 @@ public class CourseDAO {
 
     /**
      * Find courses from database by category
+     *
      * @param category
      * @return
      * @throws SQLException
@@ -142,6 +148,7 @@ public class CourseDAO {
 
     /**
      * Find courses from database by instructor id
+     *
      * @param instructorId
      * @return
      * @throws SQLException
@@ -153,6 +160,7 @@ public class CourseDAO {
 
     /**
      * Update course in database
+     *
      * @param course
      * @return
      * @throws SQLException
@@ -164,6 +172,7 @@ public class CourseDAO {
 
     /**
      * Delete course from database by id
+     *
      * @param id
      * @return
      * @throws SQLException
@@ -173,6 +182,23 @@ public class CourseDAO {
         return false;
     }
 
-        // TODO
+    /**
+     * Check if course exists in database by id
+     *
+     * @param courseId
+     * @return
+     * @throws SQLException
+     */
+    public boolean existsById(long courseId) throws SQLException {
+        String sql = QueryUtil.getQuery("course.existsById");
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, courseId);
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        }
         return false;
     }
+
+}
