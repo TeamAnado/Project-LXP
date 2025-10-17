@@ -29,7 +29,7 @@ public class UserDao {
             pstmt.setLong(1, id);
             return getUserAuthInfo(pstmt);
         } catch (SQLException e) {
-            throw new LXPDatabaseAccessException("아이디(" + id + ") 조회 중 데이터베이스 접속 중 오류 발생", e);
+            throw new LXPDatabaseAccessException("아이디 조회 중 데이터베이스 접속 중 오류 발생", e);
         }
     }
 
@@ -68,7 +68,7 @@ public class UserDao {
             pstmt.setString(1, email);
             return getUserAuthInfo(pstmt);
         } catch (SQLException e) {
-            throw new LXPDatabaseAccessException("이메일(" + email + ") 조회 중 데이터베이스 접속 중 오류 발생", e);
+            throw new LXPDatabaseAccessException("이메일 조회 중 데이터베이스 접속 중 오류 발생", e);
         }
     }
 

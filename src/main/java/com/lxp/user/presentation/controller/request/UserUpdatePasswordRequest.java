@@ -24,7 +24,7 @@ public record UserUpdatePasswordRequest(
 
     private void checkPassword() {
         if (isBlank(this.newPassword) || isBlank(this.oldPassword)) {
-            throw new IllegalArgumentException("이전 비밀번호는 필수입니다.");
+            throw new IllegalArgumentException("이전 비밀번호와 새 비밀번호는 필수입니다.");
         }
     }
 }
