@@ -98,12 +98,8 @@ public class UserDao {
     }
 
     private boolean existParams(PreparedStatement pstmt) throws SQLException {
-        boolean flag = false;
         try (ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
-                flag = 0 < rs.getInt(1);
-            }
-            return flag;
+            return rs.next() && rs.getInt(1) > 0;
         }
     }
 
