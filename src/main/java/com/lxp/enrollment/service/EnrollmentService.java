@@ -1,76 +1,85 @@
 package com.lxp.enrollment.service;
 
 import com.lxp.enrollment.dao.EnrollmentDao;
-import com.lxp.enrollment.exception.*;
-import com.lxp.exception.LXPException;
+import com.lxp.enrollment.exception.AlreadyEnrolledException;
+import com.lxp.enrollment.exception.EnrollmentCompleteException;
+import com.lxp.enrollment.exception.EnrollmentCompleteFailException;
+import com.lxp.enrollment.exception.EnrollmentDeleteException;
+import com.lxp.enrollment.exception.EnrollmentDeleteFailException;
+import com.lxp.enrollment.exception.EnrollmentSaveException;
+import com.lxp.enrollment.exception.EnrollmentSaveFailException;
+import com.lxp.enrollment.exception.FindLectureUserException;
+import com.lxp.enrollment.exception.InvalidIdException;
+import com.lxp.enrollment.service.dto.CreateEnrollmentDto;
+import com.lxp.enrollment.service.dto.EnrollmentCourseDto;
+import com.lxp.enrollment.service.dto.EnrollmentLectureCheckDto;
+import com.lxp.global.exception.LXPException;
 
-import java.sql.Connection;
+import java.util.List;
 
 public class EnrollmentService {
 
-    private final Connection connection;
     private final EnrollmentDao enrollmentDao;
 
-    public EnrollmentService(Connection connection, EnrollmentDao enrollmentDao) {
-
-        this.connection = connection;
-        this.enrollmentDao = new EnrollmentDao(connection);
+    public EnrollmentService(EnrollmentDao enrollmentDao) {
+        this.enrollmentDao = enrollmentDao;
     }
 
-    public void save(long userId, long courseId) {
-
-        if (userId <= 0 || courseId <= 0) {
-            throw new InvalidIdException();
-        }
-
+    public void save(CreateEnrollmentDto dto) {
         try {
-            if (enrollmentDao.findByUser(userId, courseId)) {
+            if (this.enrollmentDao.findByUser(dto.userId(), dto.courseId())) {
                 throw new AlreadyEnrolledException();
             }
-            boolean result = enrollmentDao.save(userId, courseId);
-            if (result) {
-                System.out.println("수강 신청 완료되었습니다.");
-            } else {
+            boolean result = this.enrollmentDao.save(dto.userId(), dto.courseId());
+            if (!result) {
                 throw new EnrollmentSaveFailException();
             }
-        } catch (LXPException e) {
-            throw new EnrollmentSaveException();
+            System.out.println("수강 신청 완료되었습니다.");
+
+        } catch (AlreadyEnrolledException | EnrollmentSaveFailException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new EnrollmentSaveException(e);
         }
     }
 
-    public void delete(long userId, long courseId) {
-
-        if (userId <= 0 || courseId <= 0) {
-            throw new InvalidIdException();
-        }
+    public void delete(CreateEnrollmentDto dto) {
         try {
-            boolean result = enrollmentDao.delete(userId, courseId);
+            boolean result = this.enrollmentDao.delete(dto.userId(), dto.courseId());
 
-            if (result) {
-                System.out.println("수강 취소 성공하였습니다.");
-            } else {
+            if (!result) {
                 throw new EnrollmentDeleteFailException();
             }
-        } catch (LXPException e) {
-            throw new EnrollmentDeleteException();
+            System.out.println("수강 취소 성공하였습니다.");
+
+        } catch (EnrollmentDeleteFailException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new EnrollmentDeleteException(e);
         }
     }
 
-    public void complete(long userId, long courseId) {
-
-        if (userId <= 0 || courseId <= 0) {
-            throw new InvalidIdException();
-        }
-
-    }
-
-    public void isUserEnrolled(long userId, long lectureId) {
-
-        if (userId <= 0 || lectureId <= 0) {
-            throw new InvalidIdException();
-        }
+    public void complete(CreateEnrollmentDto dto) {
         try {
-            boolean result = enrollmentDao.isUserEnrolled(userId, lectureId);
+            boolean result = this.enrollmentDao.complete(dto.userId(), dto.courseId());
+
+            if (!result) {
+                throw new EnrollmentCompleteFailException();
+            }
+            System.out.println("수강 완료 처리되었습니다.");
+
+        } catch (EnrollmentCompleteFailException e) {
+            throw e;
+
+        } catch (Exception e) {
+            throw new EnrollmentCompleteException(e);
+        }
+    }
+
+    public void isUserEnrolled(EnrollmentLectureCheckDto dto) {
+        try {
+            boolean result = this.enrollmentDao.isUserEnrolled(dto.userId(), dto.lectureId());
 
             if (result) {
                 throw new AlreadyEnrolledException();
@@ -78,7 +87,31 @@ public class EnrollmentService {
                 System.out.println("수강 중이 아닙니다.");
             }
         } catch (LXPException e) {
-            throw new FindLectureUserException();
+            throw new FindLectureUserException(e);
+        }
+    }
+
+    public void findCoursesByUser(long userId) {
+        if (userId <= 0) {
+            throw new InvalidIdException();
+        }
+        List<EnrollmentCourseDto> courses = this.enrollmentDao.findCoursesByUser(userId);
+
+        if (courses.isEmpty()) {
+            System.out.println("현재 수강 중이거나 완료된 강좌가 없습니다.");
+            return;
+        }
+
+        System.out.println("=== 나의 강좌 목록 ===");
+        for (EnrollmentCourseDto c : courses) {
+            String stateLabel = switch (c.state()) {
+                case 1 -> "수강중";
+                case 3 -> "수강완료";
+                default -> "취소된 강좌";
+            };
+            System.out.printf("%d. %s [%s]%n", c.courseId(), c.title(), stateLabel);
         }
     }
 }
+
+
