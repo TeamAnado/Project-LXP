@@ -3,6 +3,7 @@ package com.lxp.user.dao;
 import com.lxp.exception.LXPDatabaseAccessException;
 import com.lxp.support.QueryUtil;
 import com.lxp.user.dao.vo.UserAuthInfo;
+import com.lxp.user.dao.vo.UserInfo;
 import com.lxp.user.exception.UserNotSavedException;
 import com.lxp.user.model.User;
 
@@ -22,12 +23,23 @@ public class UserDao {
         this.connection = connection;
     }
 
-    public Optional<UserAuthInfo> findById(long id) throws LXPDatabaseAccessException {
-        String sql = QueryUtil.getQuery("user.findById");
+    public Optional<UserAuthInfo> findByIdWithPassword(long id) throws LXPDatabaseAccessException {
+        String sql = QueryUtil.getQuery("user.findByIdWithPassword");
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             return getUserAuthInfo(pstmt);
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("아이디 조회 중 데이터베이스 접속 중 오류 발생", e);
+        }
+    }
+
+    public Optional<UserInfo> findById(long id) throws LXPDatabaseAccessException {
+        String sql = QueryUtil.getQuery("user.findById");
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+            return getUserInfo(pstmt);
         } catch (SQLException e) {
             throw new LXPDatabaseAccessException("아이디 조회 중 데이터베이스 접속 중 오류 발생", e);
         }
@@ -108,6 +120,16 @@ public class UserDao {
         try (ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 result = Optional.of(UserAuthInfo.from(rs));
+            }
+            return result;
+        }
+    }
+
+    private Optional<UserInfo> getUserInfo(PreparedStatement pstmt) throws SQLException {
+        Optional<UserInfo> result = Optional.empty();
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                result = Optional.of(UserInfo.from(rs));
             }
             return result;
         }

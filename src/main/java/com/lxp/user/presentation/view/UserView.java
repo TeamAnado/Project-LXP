@@ -6,6 +6,7 @@ import com.lxp.user.presentation.controller.UserController;
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
 import com.lxp.user.presentation.controller.request.UserSaveRequest;
+import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
 import com.lxp.user.presentation.controller.response.UserResponse;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
 
@@ -41,7 +42,7 @@ public class UserView {
                         yield handleLoginAndSetId();
                     }
                     case 3 -> {
-                        findPassword(userId);
+                        findPassword();
                         yield handleLoginAndSetId();
                     }
                     case 4 -> UserResponse.empty();
@@ -71,7 +72,7 @@ public class UserView {
         System.out.println(register.name() + "(" + register.email() + ")님 가입을 환영합니다.");
     }
 
-    public boolean findPassword(Long id) {
+    public boolean findPassword() {
         System.out.println("=== 비밀번호 찾기 ===");
         System.out.print("아이디(이메일): ");
         String email = scanner.nextLine();
@@ -86,6 +87,18 @@ public class UserView {
         String newPassword = scanner.nextLine();
         userController.resetPassword(new UserFindPasswordRequest(userResponse.id(), newPassword));
         return true;
+    }
+
+    public boolean updatePassword() {
+        System.out.println("=== 비밀번호 변경 ===");
+
+        System.out.print("기존 비밀번호: ");
+        String oldPassword = scanner.nextLine();
+
+        System.out.print("새 비밀번호: ");
+        String newPassword = scanner.nextLine();
+
+        return userController.updatePassword(new UserUpdatePasswordRequest(userId, oldPassword, newPassword));
     }
 
     public UserResponse processLogin() {

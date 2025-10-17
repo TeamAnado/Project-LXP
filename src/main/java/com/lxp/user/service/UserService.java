@@ -65,7 +65,7 @@ public class UserService {
     public boolean updatePassword(UserUpdatePasswordDto dto) {
         Objects.requireNonNull(dto, "request must not be null");
 
-        UserAuthInfo userAuthInfo = userDao.findById(dto.id())
+        UserAuthInfo userAuthInfo = userDao.findByIdWithPassword(dto.id())
             .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
         validator.authenticatePassword(dto.oldPassword(), userAuthInfo.password());
         validator.validatePassword(dto.newPassword());
