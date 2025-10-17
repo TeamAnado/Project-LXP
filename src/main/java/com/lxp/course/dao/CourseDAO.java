@@ -143,7 +143,26 @@ public class CourseDAO {
      */
     public List<Course> findByCategory(Category category) throws SQLException {
         List<Course> courseList = new ArrayList<>();
-        // TODO
+        String sql = QueryUtil.getQuery("course.findByCategory");
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, category.toString());
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("instructor_id"),
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
+                );
+                courseList.add(course);
+            }
+        }
         return courseList;
     }
 
@@ -155,8 +174,28 @@ public class CourseDAO {
      * @throws SQLException
      */
     public List<Course> findByInstructorId(Long instructorId) throws SQLException {
-        // TODO
-        return null;
+        List<Course> courseList = new ArrayList<>();
+        String sql = QueryUtil.getQuery("course.findByInstructorId");
+
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, instructorId);
+            ResultSet rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                Course course = new Course(
+                        rs.getLong("id"),
+                        rs.getString("title"),
+                        rs.getString("description"),
+                        rs.getLong("instructor_id"),
+                        Category.valueOf(rs.getString("category")),
+                        rs.getTimestamp("date_created").toLocalDateTime(),
+                        rs.getTimestamp("date_modified").toLocalDateTime()
+                );
+                courseList.add(course);
+            }
+        }
+        return courseList;
     }
 
     /**
@@ -174,8 +213,8 @@ public class CourseDAO {
             pstmt.setString(2, course.getTitle());
             pstmt.setString(3, course.getCategory().toString());
             pstmt.setString(4, course.getDescription());
-            pstmt.setLong(5, course.getId());
-            pstmt.setTimestamp(7, Timestamp.valueOf(course.getDateModified()));
+            pstmt.setTimestamp(5, Timestamp.valueOf(course.getDateModified()));
+            pstmt.setLong(6, course.getId());
             int result = pstmt.executeUpdate();
             return result > 0;
         }
@@ -208,7 +247,8 @@ public class CourseDAO {
      */
     public boolean existsById(long courseId) throws SQLException {
         String sql = QueryUtil.getQuery("course.existsById");
-        try (PreparedStatement pstmt = DBConfig.getInstance().getConnection().prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, courseId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
