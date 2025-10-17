@@ -31,10 +31,12 @@ public class LectureDao {
     }
 
     private void setLectureParameters(PreparedStatement pstmt, Lecture lecture) throws SQLException {
-        pstmt.setString(1, lecture.getTitle());
-        pstmt.setString(2, lecture.getDescription());
-        pstmt.setTimestamp(3, Timestamp.valueOf(lecture.getDateCreated()));
-        pstmt.setTimestamp(4, Timestamp.valueOf(lecture.getDateModified()));
+        pstmt.setLong(1, lecture.getCourseId());
+        pstmt.setString(2, lecture.getTitle());
+        pstmt.setString(3, lecture.getDescription());
+        pstmt.setString(4, lecture.getPath());
+        pstmt.setTimestamp(5, Timestamp.valueOf(lecture.getDateCreated()));
+        pstmt.setTimestamp(6, Timestamp.valueOf(lecture.getDateModified()));
     }
 
     private long executeAndGetKey(PreparedStatement pstmt) throws SQLException {

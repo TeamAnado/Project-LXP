@@ -1,0 +1,68 @@
+package com.lxp.user;
+
+import com.lxp.user.dao.UserDao;
+import com.lxp.user.model.User;
+import com.lxp.user.presentation.controller.request.UserSaveRequest;
+import com.lxp.user.presentation.controller.response.UserSaveResponse;
+import com.lxp.user.security.PasswordEncoder;
+import com.lxp.user.service.UserService;
+import com.lxp.user.service.validator.UserValidator;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+public class UserSaveTest {
+
+    @Mock
+    private UserDao mockUserDao;
+    @Mock
+    private PasswordEncoder mockEncoder;
+    @Mock
+    private UserValidator validator;
+    @InjectMocks
+    private UserService userService;
+
+    @Test
+    @DisplayName("유효한 정보를 입력하면 회원가입이 성공하고 사용자 정보가 반환된다")
+    public void should_register_successfully_when_input_is_valid() {
+        String username = "test";
+        String email = "test@test.com";
+        String password = "test123@1A";
+        String encodedPassword = "hashedPassword123";
+
+        UserSaveRequest request = new UserSaveRequest(username, email, password);
+
+        when(mockUserDao.existByEmail(eq(email))).thenReturn(false);
+        when(mockEncoder.encode(eq(password))).thenReturn(encodedPassword);
+        doNothing().when(validator).validateEmail(anyString());
+        doNothing().when(validator).validateUsername(anyString());
+        doNothing().when(validator).validatePassword(anyString());
+
+        UserSaveResponse response = userService.register(request.to());
+
+        verify(mockUserDao, times(1)).existByEmail(email);
+        verify(mockUserDao, times(1)).save(any(User.class));
+        verify(validator, times(1)).validateEmail(email);
+        verify(validator, times(1)).validateUsername(username);
+        verify(validator, times(1)).validatePassword(password);
+        assertAll(
+            () -> assertThat(response.email()).isEqualTo(email),
+            () -> assertThat(response.name()).isEqualTo(username)
+        );
+    }
+
+}
