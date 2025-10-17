@@ -1,9 +1,8 @@
 package com.lxp.user;
 
-import com.lxp.base.BaseDateModifiedEntity;
+import com.lxp.global.base.BaseDateModifiedEntity;
 
 import static com.lxp.user.validator.UserValidator.validateEmail;
-import static com.lxp.user.validator.UserValidator.validatePassword;
 import static com.lxp.user.validator.UserValidator.validateUsername;
 
 public class User extends BaseDateModifiedEntity {
@@ -36,7 +35,7 @@ public class User extends BaseDateModifiedEntity {
     }
 
     public void recordTime() {
-        this.recordCreationTime();
+        this.recordDateCreated();
         this.recordDateModified();
     }
 

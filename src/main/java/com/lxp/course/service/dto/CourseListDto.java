@@ -7,5 +7,4 @@ public record CourseListDto(
         String title,
         Category category,
         Long instructorId
-) {
-}
+) {}

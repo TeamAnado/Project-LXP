@@ -1,4 +1,4 @@
-package com.lxp.config;
+package com.lxp.global.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;

@@ -5,21 +5,24 @@ import com.lxp.course.model.Course;
 import com.lxp.course.service.dto.CourseDetailDto;
 import com.lxp.course.service.dto.CourseListDto;
 import com.lxp.course.service.dto.CreateCourseDto;
-import com.lxp.course.service.dto.UpdateCourseDto;
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class CourseService {
+
     private final CourseDAO courseDAO;
 
     public CourseService(CourseDAO courseDAO) {
         this.courseDAO = courseDAO;
     }
 
+    // Constructor for testing with dependency injection
+    public CourseService(CourseDAO courseDAO) {
+        this.courseDAO = courseDAO;
+    }
 
     public Long createCourse (CreateCourseDto dto) throws SQLException {
         Course course = new Course(
@@ -28,11 +31,9 @@ public class CourseService {
                 dto.instructorId(),
                 dto.category()
         );
-
-        return courseDAO.Save(course);
+        return courseDAO.save(course);
     }
 
-    // 전체 목록 조회
     public List<CourseListDto> findAllCourses() throws SQLException {
         List<Course> courses = courseDAO.findAll();
         return courses.stream()
@@ -45,7 +46,6 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    // 단일 조회
     public CourseDetailDto findCourseById(Long id) throws SQLException {
         Course course = courseDAO.findById(id);
         if (course == null) {
@@ -61,9 +61,7 @@ public class CourseService {
         );
     }
 
-    // 강좌명 검색 기능
     public List<CourseListDto> findCourseByTitle(String title) throws SQLException {
-
         List<Course> courses = courseDAO.findByTitleContaining(title);
 
         return courses.stream()
@@ -76,26 +74,5 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public void updateCourse(UpdateCourseDto dto) throws SQLException {
-        Course course = courseDAO.findById(dto.id());
-        if (course == null) {
-            throw new LXPException("수정하려는 강좌를 찾을 수 없습니다. ID:" + dto.id());
-        }
-        course.setTitle(dto.title());
-        course.setDescription(dto.description());
-        course.setCategory(dto.category());
-
-        courseDAO.update(course);
-    }
-
-    public void deleteCourseById(Long id) throws SQLException {
-        Course course = courseDAO.findById(id);
-
-        if (course == null) {
-            throw new LXPException("삭제하려는 강좌를 찾을 수 없습니다. ID:" + id);
-        }
-
-        courseDAO.delete(id);
-    }
 }
 
