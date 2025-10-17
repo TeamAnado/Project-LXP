@@ -1,8 +1,8 @@
 package com.lxp.user.service;
 
-import com.lxp.exception.LXPExceptionHandler;
 import com.lxp.user.dao.UserDao;
 import com.lxp.user.dao.vo.UserAuthInfo;
+import com.lxp.user.exception.InvalidEmailException;
 import com.lxp.user.exception.UserAlreadyExistsException;
 import com.lxp.user.exception.UserNotFoundException;
 import com.lxp.user.model.User;
@@ -53,21 +53,19 @@ public class UserService {
     }
 
     public UserAuthInfo findByEmail(String email) {
-        validator.validateEmail(email);
-        return userDao.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException("이메일 또는 비밀번호가 틀렸습니다."));
+        try {
+            validator.validateEmail(email);
+            return userDao.findByEmail(email).orElseThrow(UserNotFoundException::new);
+        } catch (InvalidEmailException | UserNotFoundException e) {
+            throw new UserNotFoundException("이메일 또는 비밀번호가 틀렸습니다.");
+        }
     }
 
-    public UserAuthInfo isExistUser(String email) {
+    public boolean isExistUser(String email) {
         Objects.requireNonNull(email, "request must not be null");
 
-        UserAuthInfo info = UserAuthInfo.empty();
-        try {
-            info = findByEmail(email);
-        } catch (UserNotFoundException e) {
-            LXPExceptionHandler.handle(e);
-        }
-        return info;
+        validator.validateEmail(email);
+        return userDao.existByEmail(email);
     }
 
     public boolean updatePassword(UserUpdatePasswordDto dto) {
@@ -76,6 +74,7 @@ public class UserService {
         UserAuthInfo userAuthInfo = userDao.findById(dto.id())
             .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
         validator.authenticatePassword(dto.oldPassword(), userAuthInfo.password());
+        validator.validatePassword(dto.newPassword());
 
         String hashedPassword = encoder.encode(dto.newPassword());
         return userDao.updatePassword(dto.id(), hashedPassword);

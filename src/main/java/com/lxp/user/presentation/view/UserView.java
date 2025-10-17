@@ -13,6 +13,8 @@ import static com.lxp.support.StringUtils.isBlank;
 
 public class UserView {
 
+    private static long userId;
+
     private final UserController userController;
     private final Scanner scanner;
 
@@ -28,13 +30,21 @@ public class UserView {
                 if (isBlank(answer)) {
                     throw new LXPException("잘못된 입력입니다.");
                 }
-
                 int n = Integer.parseInt(answer);
-                if (n == 1) {
-                    processLogin();
-                } else if (n == 4) {
-                    return UserResponse.empty();
-                }
+
+                return switch (n) {
+                    case 1 -> {
+                        UserResponse userResponse = processLogin();
+                        userId = userResponse.id();
+                        yield userResponse;
+                    }
+                    case 3 -> {
+                        findPassword(userId);
+                        yield new UserResponse(userId);
+                    }
+                    case 4 -> UserResponse.empty();
+                    default -> throw new LXPException("Unexpected value: " + n);
+                };
             } catch (Exception e) {
                 LXPExceptionHandler.handle(e);
             }
@@ -46,12 +56,12 @@ public class UserView {
         return scanner.nextLine();
     }
 
-    public boolean findPassword() {
-        System.out.print("이메일: ");
+    public boolean findPassword(Long id) {
+        System.out.println("=== 비밀번호 찾기 ===");
+        System.out.print("아이디(이메일): ");
         String email = scanner.nextLine();
 
-        Long id = userController.checkUserExistence(email).id();
-        if (id != null) {
+        if (!userController.checkUserExistence(email)) {
             System.out.println("잘못된 이메일입니다.");
             return false;
         }
@@ -63,7 +73,8 @@ public class UserView {
     }
 
     public UserResponse processLogin() {
-        System.out.print("아이디: ");
+        System.out.println("=== 로그인 ===");
+        System.out.print("아이디(이메일): ");
         String id = scanner.nextLine();
         System.out.print("비밀번호: ");
         String password = scanner.nextLine();

@@ -16,7 +16,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -38,15 +40,23 @@ public class UserSaveTest {
         String username = "test";
         String email = "test@test.com";
         String password = "test123@1A";
-        String encode = mockEncoder.encode(password);
+        String encodedPassword = "hashedPassword123";
 
         UserSaveRequest request = new UserSaveRequest(username, email, password);
 
-        when(mockEncoder.encode(eq(password))).thenReturn(encode);
+        when(mockUserDao.existByEmail(eq(email))).thenReturn(false);
+        when(mockEncoder.encode(eq(password))).thenReturn(encodedPassword);
+        doNothing().when(validator).validateEmail(anyString());
+        doNothing().when(validator).validateUsername(anyString());
+        doNothing().when(validator).validatePassword(anyString());
 
         UserSaveResponse response = userService.register(request.to());
 
+        verify(mockUserDao, times(1)).existByEmail(email);
         verify(mockUserDao, times(1)).save(any(User.class));
+        verify(validator, times(1)).validateEmail(email);
+        verify(validator, times(1)).validateUsername(username);
+        verify(validator, times(1)).validatePassword(password);
         assertAll(
             () -> assertThat(response.email()).isEqualTo(email),
             () -> assertThat(response.name()).isEqualTo(username)

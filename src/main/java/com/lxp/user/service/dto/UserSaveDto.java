@@ -14,4 +14,9 @@ public record UserSaveDto(
         return user;
     }
 
+    @Override
+    public String toString() {
+        return "UserSaveDto{name='" + name + "', email='" + email + "', rawPassword='[PROTECTED]'}";
+    }
+
 }

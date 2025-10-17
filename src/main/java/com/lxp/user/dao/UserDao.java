@@ -20,7 +20,7 @@ public class UserDao {
         this.connection = connection;
     }
 
-    public Optional<UserAuthInfo> findById(Long id) throws LXPDatabaseAccessException {
+    public Optional<UserAuthInfo> findById(long id) throws LXPDatabaseAccessException {
         String sql = QueryUtil.getQuery("user.findById");
 
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -76,7 +76,7 @@ public class UserDao {
             pstmt.setLong(1, id);
             return existParams(pstmt);
         } catch (SQLException e) {
-            throw new LXPDatabaseAccessException("이메일 체크 중 데이터베이스 접속 중 오류 발생", e);
+            throw new LXPDatabaseAccessException("아이디 체크 중 데이터베이스 접속 중 오류 발생", e);
         }
     }
 

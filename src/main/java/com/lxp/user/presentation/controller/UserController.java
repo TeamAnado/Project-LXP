@@ -20,8 +20,8 @@ public class UserController {
      * @param email
      * @return
      */
-    public UserResponse checkUserExistence(String email) {
-        return userService.isExistUser(email).toResponse();
+    public boolean checkUserExistence(String email) {
+        return userService.isExistUser(email);
     }
 
     public boolean resetPassword(UserFindPasswordRequest request) {
@@ -33,7 +33,7 @@ public class UserController {
     }
 
     public UserResponse login(UserLoginRequest request) {
-        return userService.login(request.to()).toResponse();
+        return UserResponse.from(userService.login(request.to()));
     }
 
 }
