@@ -11,10 +11,7 @@ import java.util.List;
 
 public class CourseDAO {
 
-    private final Connection connection;
-
-    public CourseDAO() throws SQLException {
-        this.connection = DBConfig.getInstance().getConnection();
+    public CourseDAO() {
     }
 
     /**
@@ -26,7 +23,8 @@ public class CourseDAO {
      */
     public long save(Course course) throws SQLException {
         String sql = QueryUtil.getQuery("course.save");
-        try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setLong(1, course.getInstructorId());
             pstmt.setString(2, course.getTitle());
             pstmt.setString(3, course.getCategory().toString());
@@ -56,7 +54,8 @@ public class CourseDAO {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findAll");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Course course = new Course(
@@ -84,7 +83,8 @@ public class CourseDAO {
     public Course findById(Long id) throws SQLException {
         String sql = QueryUtil.getQuery("course.findById");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
@@ -113,7 +113,8 @@ public class CourseDAO {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByTitleContaining");
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (Connection connection = DBConfig.getInstance().getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, "%" + keyword + "%");
             ResultSet rs = pstmt.executeQuery();
 
@@ -191,7 +192,7 @@ public class CourseDAO {
      */
     public boolean existsById(long courseId) throws SQLException {
         String sql = QueryUtil.getQuery("course.existsById");
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = DBConfig.getInstance().getConnection().prepareStatement(sql)) {
             pstmt.setLong(1, courseId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {

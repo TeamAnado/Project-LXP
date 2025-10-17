@@ -24,7 +24,7 @@ public class Course extends BaseDateModifiedEntity {
     ) {
         this.title = title;
         this.description = description;
-        this.instructorId =instructorId;
+        this.instructorId = instructorId;
         this.category = category;
         recordDateCreated();
         recordDateModified();

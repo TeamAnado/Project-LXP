@@ -24,7 +24,7 @@ public class CourseService {
         this.courseDAO = courseDAO;
     }
 
-    public Long createCourse (CreateCourseDto dto) throws SQLException {
+    public Long createCourse(CreateCourseDto dto) throws SQLException {
         Course course = new Course(
                 dto.title(),
                 dto.description(),
