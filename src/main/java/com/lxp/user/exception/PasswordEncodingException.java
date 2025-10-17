@@ -15,4 +15,5 @@ public class PasswordEncodingException extends LXPException {
     public PasswordEncodingException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }
