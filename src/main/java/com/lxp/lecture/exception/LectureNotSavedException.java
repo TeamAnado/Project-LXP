@@ -1,6 +1,6 @@
 package com.lxp.lecture.exception;
 
-import com.lxp.exception.LXPDatabaseAccessException;
+import com.lxp.global.exception.LXPDatabaseAccessException;
 
 public class LectureNotSavedException extends LXPDatabaseAccessException {
 

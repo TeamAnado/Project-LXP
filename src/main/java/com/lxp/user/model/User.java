@@ -1,6 +1,6 @@
 package com.lxp.user.model;
 
-import com.lxp.base.BaseDateModifiedEntity;
+import com.lxp.global.base.BaseDateModifiedEntity;
 
 import java.time.LocalDateTime;
 
