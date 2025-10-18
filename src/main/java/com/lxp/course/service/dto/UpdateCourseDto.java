@@ -7,4 +7,5 @@ public record UpdateCourseDto(
         String title,
         String description,
         Category category
-) {}
+) {
+}

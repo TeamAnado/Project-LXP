@@ -9,9 +9,9 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseDAO {
+public class CourseDao {
 
-    public CourseDAO() {
+    public CourseDao() {
     }
 
     /**

@@ -11,4 +11,5 @@ public record CourseDetailDto(
         Category category,
         Long instructorId,
         LocalDateTime dateCreated
-) {}
+) {
+}

@@ -7,4 +7,5 @@ public record CreateCourseDto(
         String description,
         Long instructorId,
         Category category
-) {}
+) {
+}
