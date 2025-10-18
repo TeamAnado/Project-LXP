@@ -12,22 +12,22 @@ public record UserUpdateInfoRequest(
 ) {
 
     public UserUpdateInfoRequest {
-        checkId();
-        checkUsername();
+        checkId(id);
+        checkUsername(name);
     }
 
     public UserUpdateInfoDto to() {
         return new UserUpdateInfoDto(this.id, this.name);
     }
 
-    private void checkId() {
-        if (this.id == null) {
+    private void checkId(Long id) {
+        if (id == null) {
             throw new LXPException("사용자 ID는 필수입니다.");
         }
     }
 
-    private void checkUsername() {
-        if (isBlank(this.name)) {
+    private void checkUsername(String name) {
+        if (isBlank(name)) {
             throw new InvalidNameException();
         }
     }

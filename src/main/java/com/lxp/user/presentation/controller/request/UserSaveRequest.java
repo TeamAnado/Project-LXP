@@ -14,29 +14,29 @@ public record UserSaveRequest(
 ) {
 
     public UserSaveRequest{
-        checkName();
-        checkEmail();
-        checkPassword();
+        checkName(name);
+        checkEmail(email);
+        checkPassword(rawPassword);
     }
 
     public UserSaveDto to() {
         return new UserSaveDto(this.name, this.email, this.rawPassword);
     }
 
-    private void checkName() {
-        if (isBlank(this.name)) {
+    private void checkName(String name) {
+        if (isBlank(name)) {
             throw new InvalidNameException();
         }
     }
 
-    private void checkEmail() {
-        if (isBlank(this.email)) {
+    private void checkEmail(String email) {
+        if (isBlank(email)) {
             throw new InvalidEmailException("이메일은 필수입니다.");
         }
     }
 
-    private void checkPassword() {
-        if (isBlank(this.rawPassword)) {
+    private void checkPassword(String rawPassword) {
+        if (isBlank(rawPassword)) {
             throw new InvalidPasswordException("새 비밀번호는 필수입니다.");
         }
     }

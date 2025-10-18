@@ -12,22 +12,22 @@ public record UserFindPasswordRequest(
 ) {
 
     public UserFindPasswordRequest {
-        checkId();
-        checkPassword();
+        checkId(id);
+        checkPassword(newPassword);
     }
 
     public UserFindPasswordDto to() {
         return new UserFindPasswordDto(this.id, this.newPassword);
     }
 
-    private void checkId() {
-        if (this.id == null) {
+    private void checkId(Long id) {
+        if (id == null) {
             throw new LXPException("사용자 ID는 필수입니다.");
         }
     }
 
-    private void checkPassword() {
-        if (isBlank(this.newPassword)) {
+    private void checkPassword(String newPassword) {
+        if (isBlank(newPassword)) {
             throw new InvalidPasswordException("새 비밀번호는 필수입니다.");
         }
     }
