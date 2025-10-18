@@ -17,6 +17,13 @@ public record UserPasswordCheckRequest(Long id, String password) {
         return new UserPasswordCheckDto(this.id, this.password);
     }
 
+    @Override
+    public String toString() {
+        return "UserPasswordCheckRequest{" +
+            "id=" + id +
+            '}';
+    }
+
     private void checkId(Long id) {
         if (id == null) {
             throw new LXPException("사용자 ID는 필수입니다.");

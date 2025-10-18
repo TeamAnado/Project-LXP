@@ -20,6 +20,13 @@ public record UserLoginRequest(
         return new UserLoginDto(this.email, this.password);
     }
 
+    @Override
+    public String toString() {
+        return "UserLoginRequest{" +
+            "email='" + email + '\'' +
+            '}';
+    }
+
     private void checkEmail(String email) {
         if (isBlank(email)) {
             throw new InvalidEmailException("이메일은 필수입니다.");

@@ -20,6 +20,13 @@ public record UserFindPasswordRequest(
         return new UserFindPasswordDto(this.id, this.newPassword);
     }
 
+    @Override
+    public String toString() {
+        return "UserFindPasswordRequest{" +
+            "id=" + id +
+            '}';
+    }
+
     private void checkId(Long id) {
         if (id == null) {
             throw new LXPException("사용자 ID는 필수입니다.");

@@ -21,6 +21,11 @@ public record UserUpdatePasswordRequest(
         return new UserUpdatePasswordDto(this.id, this.oldPassword, this.newPassword);
     }
 
+    @Override
+    public String toString() {
+        return "UserUpdatePasswordRequest{id=" + id + '}';
+    }
+
     private void checkId(Long id) {
         if (id == null) {
             throw new LXPException("사용자 ID는 필수입니다.");

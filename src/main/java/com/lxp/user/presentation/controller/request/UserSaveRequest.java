@@ -13,7 +13,7 @@ public record UserSaveRequest(
     String rawPassword
 ) {
 
-    public UserSaveRequest{
+    public UserSaveRequest {
         checkName(name);
         checkEmail(email);
         checkPassword(rawPassword);
@@ -21,6 +21,14 @@ public record UserSaveRequest(
 
     public UserSaveDto to() {
         return new UserSaveDto(this.name, this.email, this.rawPassword);
+    }
+
+    @Override
+    public String toString() {
+        return "UserSaveRequest{" +
+            "name='" + name + '\'' +
+            ", email='" + email + '\'' +
+            '}';
     }
 
     private void checkName(String name) {
