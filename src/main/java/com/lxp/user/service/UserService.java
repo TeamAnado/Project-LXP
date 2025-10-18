@@ -2,15 +2,19 @@ package com.lxp.user.service;
 
 import com.lxp.user.dao.UserDao;
 import com.lxp.user.dao.vo.UserAuthInfo;
+import com.lxp.user.dao.vo.UserInfo;
 import com.lxp.user.exception.InvalidEmailException;
 import com.lxp.user.exception.UserAlreadyExistsException;
 import com.lxp.user.exception.UserNotFoundException;
 import com.lxp.user.model.User;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
 import com.lxp.user.security.PasswordEncoder;
+import com.lxp.user.service.dto.UserFindDto;
 import com.lxp.user.service.dto.UserFindPasswordDto;
 import com.lxp.user.service.dto.UserLoginDto;
+import com.lxp.user.service.dto.UserPasswordCheckDto;
 import com.lxp.user.service.dto.UserSaveDto;
+import com.lxp.user.service.dto.UserUpdateInfoDto;
 import com.lxp.user.service.dto.UserUpdatePasswordDto;
 import com.lxp.user.service.validator.UserValidator;
 
@@ -60,6 +64,35 @@ public class UserService {
         } catch (InvalidEmailException | UserNotFoundException e) {
             throw new UserNotFoundException("이메일 또는 비밀번호가 틀렸습니다.");
         }
+    }
+
+    public UserInfo findById(Long id) {
+        return userDao.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    public UserInfo findUser(UserFindDto dto) {
+        return findById(dto.id());
+    }
+
+    public boolean updateUserInfo(UserUpdateInfoDto dto) {
+        if (!userDao.existById(dto.id())) {
+            throw new UserNotFoundException();
+        }
+        validator.validateUsername(dto.name());
+        return userDao.updateUser(dto.id(), LocalDateTime.now(), dto.name());
+    }
+
+    public boolean isPasswordMatch(UserPasswordCheckDto dto) {
+        boolean flag = false;
+        try {
+            UserAuthInfo userAuthInfo = userDao.findByIdWithPassword(dto.id())
+                .orElseThrow(() -> new UserNotFoundException("사용자가 존재하지 않습니다."));
+            validator.authenticatePassword(dto.password(), userAuthInfo.password());
+            flag = true;
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return flag;
     }
 
     public boolean updatePassword(UserUpdatePasswordDto dto) {
