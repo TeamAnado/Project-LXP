@@ -108,7 +108,7 @@ public class UserView {
     public void runMyPageFunction() {
         while (true) {
             try {
-                String answer = displayAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기");
+                String answer = displayAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기: ");
                 int n = Integer.parseInt(answer);
                 if (n == 1) {
                     handleUserUpdate();
@@ -146,15 +146,6 @@ public class UserView {
         return answer;
     }
 
-    public void handleUserUpdate() {
-        String newName = displayAndGetInput("새로운 이름:");
-
-        boolean flag = userController.updateUsername(new UserUpdateInfoRequest(SessionContext.getInstance().getUserId(), newName));
-        if (!flag) {
-            System.out.println("실패하였습니다");
-        }
-    }
-
     /**
      * 사용자로부터 이름, 이메일, 비밀번호를 입력받아 회원가입을 처리하고 결과를 출력합니다.
      */
@@ -167,6 +158,21 @@ public class UserView {
 
         UserSaveResponse register = userController.register(new UserSaveRequest(name, email, password));
         System.out.println(register.name() + "(" + register.email() + ")님 가입을 환영합니다.");
+    }
+
+    /**
+     * 로그인 처리 후, 반환된 사용자 ID를 현재 로그인 상태(currentUserId)에 설정합니다.
+     *
+     * @return UserResponse 로그인 성공 정보
+     */
+    public UserResponse handleLoginAndSetId() {
+        UserResponse userResponse = processLogin();
+        if (userResponse.isEmpty()) {
+            System.out.println("로그인 정보가 올바르지 않습니다.");
+            return UserResponse.empty();
+        }
+        SessionContext.getInstance().setUserId(userResponse.id());
+        return userResponse;
     }
 
     /**
@@ -203,12 +209,21 @@ public class UserView {
         return userController.updatePassword(request);
     }
 
+    public void handleUserUpdate() {
+        String newName = displayAndGetInput("새로운 이름:");
+
+        boolean flag = userController.updateUsername(new UserUpdateInfoRequest(SessionContext.getInstance().getUserId(), newName));
+        if (!flag) {
+            System.out.println("실패하였습니다");
+        }
+    }
+
     /**
      * 이메일과 비밀번호를 입력받아 로그인을 시도하고 결과를 반환합니다.
      *
      * @return UserResponse 로그인 성공 시 ID를 포함
      */
-    public UserResponse processLogin() {
+    private UserResponse processLogin() {
         System.out.println("=== 로그인 ===");
         String email = displayAndGetInput("아이디(이메일): ");
         String password = displayAndGetInput("비밀번호: ");
@@ -226,18 +241,4 @@ public class UserView {
         System.out.println(response.toString());
     }
 
-    /**
-     * 로그인 처리 후, 반환된 사용자 ID를 현재 로그인 상태(currentUserId)에 설정합니다.
-     *
-     * @return UserResponse 로그인 성공 정보
-     */
-    private UserResponse handleLoginAndSetId() {
-        UserResponse userResponse = processLogin();
-        if (userResponse.isEmpty()) {
-            System.out.println("로그인 정보가 올바르지 않습니다.");
-            return UserResponse.empty();
-        }
-        SessionContext.getInstance().setUserId(userResponse.id());
-        return userResponse;
-    }
 }
