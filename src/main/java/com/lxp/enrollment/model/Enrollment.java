@@ -1,6 +1,6 @@
 package com.lxp.enrollment.model;
 
-import com.lxp.base.BaseDateCreatedEntity;
+import com.lxp.global.base.BaseDateCreatedEntity;
 
 import java.sql.Date;
 //TODO : 패키지 분리, 클래스명 수정

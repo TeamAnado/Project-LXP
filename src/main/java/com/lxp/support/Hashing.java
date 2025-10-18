@@ -1,6 +1,6 @@
 package com.lxp.support;
 
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
