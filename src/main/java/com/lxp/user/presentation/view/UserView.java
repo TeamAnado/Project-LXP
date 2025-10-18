@@ -3,10 +3,13 @@ package com.lxp.user.presentation.view;
 import com.lxp.global.context.SessionContext;
 import com.lxp.global.exception.LXPException;
 import com.lxp.global.exception.LXPExceptionHandler;
+import com.lxp.support.StringUtils;
+import com.lxp.user.exception.InvalidPasswordException;
 import com.lxp.user.presentation.controller.UserController;
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
 import com.lxp.user.presentation.controller.request.UserFindRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
+import com.lxp.user.presentation.controller.request.UserPasswordCheckRequest;
 import com.lxp.user.presentation.controller.request.UserSaveRequest;
 import com.lxp.user.presentation.controller.request.UserUpdateInfoRequest;
 import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
@@ -14,9 +17,12 @@ import com.lxp.user.presentation.controller.response.UserFindResponse;
 import com.lxp.user.presentation.controller.response.UserResponse;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
 
+import java.util.Arrays;
 import java.util.Scanner;
 
+import static com.lxp.global.exception.LXPExceptionHandler.handle;
 import static com.lxp.support.StringUtils.isBlank;
+import static com.lxp.support.StringUtils.isNull;
 
 /**
  * 콘솔 애플리케이션의 사용자 인터페이스(View) 및 요청 처리(Handler) 역할을 수행하는 클래스입니다.
@@ -60,7 +66,7 @@ public class UserView {
                     default -> throw new LXPException("Unexpected value: " + n);
                 };
             } catch (Exception e) {
-                LXPExceptionHandler.handle(e);
+                handle(e);
             }
         }
     }
@@ -82,22 +88,16 @@ public class UserView {
                     System.out.println("잘못된 입력입니다. 메뉴를 다시 선택해주세요.");
                 }
             } catch (Exception e) {
-                LXPExceptionHandler.handle(e);
+                handle(e);
             }
         }
-    }
-
-    /**
-     * 현재 로그인 상태를 해제하고 사용자 ID를 초기화합니다.
-     */
-    public void logout() {
-        SessionContext.getInstance().clear();
     }
 
     /**
      * 마이페이지 정보를 출력하고, 관련된 기능 메뉴 실행 흐름을 시작합니다.
      */
     public void showMyPage() {
+        if (isLoggedOutAndWarn()) return;
         printMyPage();
         runMyPageFunction();
     }
@@ -106,6 +106,7 @@ public class UserView {
      * 마이페이지 내부 기능(개인정보 수정, 비밀번호 변경 등)의 흐름을 제어합니다.
      */
     public void runMyPageFunction() {
+        if (isLoggedOutAndWarn()) return;
         while (true) {
             try {
                 String answer = displayAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기: ");
@@ -123,11 +124,17 @@ public class UserView {
                 } else {
                     System.out.println("잘못된 입력입니다. 메뉴를 다시 선택해주세요.");
                 }
+            } catch (NumberFormatException e) {
+                System.out.println("숫자를 입력해주세요.");
+            } catch (LXPException e) {
+                System.out.println(e.getMessage());
             } catch (Exception e) {
                 LXPExceptionHandler.handle(e);
             }
         }
     }
+
+    //-------------------------------------------------------------------
 
     /**
      * 사용자에게 메뉴 메시지를 출력하고 콘솔 입력을 받습니다.
@@ -176,6 +183,13 @@ public class UserView {
     }
 
     /**
+     * 현재 로그인 상태를 해제하고 사용자 ID를 초기화합니다.
+     */
+    public void logout() {
+        SessionContext.getInstance().clear();
+    }
+
+    /**
      * 이메일을 입력받아 사용자 존재 여부를 확인하고, 새 비밀번호를 입력받아 재설정합니다.
      *
      * @return boolean 비밀번호 재설정 성공 여부
@@ -200,21 +214,51 @@ public class UserView {
      * @return boolean 비밀번호 업데이트 성공 여부
      */
     public boolean handlePasswordUpdate() {
+        if (isLoggedOutAndWarn()) return false;
         System.out.println("=== 비밀번호 변경 ===");
 
         String oldPassword = displayAndGetInput("기존 비밀번호: ");
         String newPassword = displayAndGetInput("새 비밀번호: ");
+        checkPassword(oldPassword, newPassword);
 
-        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(SessionContext.getInstance().getUserId(), oldPassword, newPassword);
+        if (newPassword.length() < 8) {
+            System.out.println("비밀번호는 8자 이상이어야 합니다.");
+            return false;
+        }
+        if (newPassword.equals(oldPassword)) {
+            System.out.println("새 비밀번호는 기존 비밀번호와 달라야 합니다.");
+            return false;
+        }
+
+        String confirm = displayAndGetInput("새 비밀번호 확인: ");
+        if (!newPassword.equals(confirm)) {
+            System.out.println("비밀번호가 일치하지 않습니다.");
+            return false;
+        }
+
+        UserUpdatePasswordRequest request = new UserUpdatePasswordRequest(getUserId(), oldPassword, newPassword);
         return userController.updatePassword(request);
     }
 
     public void handleUserUpdate() {
+        if (isLoggedOutAndWarn()) return;
+        System.out.println("=== 유저 정보 변경 ===");
+
+        String password = displayAndGetInput("비밀번호: ");
+        boolean validPassword = userController.isValidPassword(new UserPasswordCheckRequest(getUserId(), password));
+        if (!validPassword) {
+            System.out.println("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
         String newName = displayAndGetInput("새로운 이름:");
 
-        boolean flag = userController.updateUsername(new UserUpdateInfoRequest(SessionContext.getInstance().getUserId(), newName));
+        UserUpdateInfoRequest request = new UserUpdateInfoRequest(getUserId(), newName);
+        boolean flag = userController.updateUsername(request);
         if (!flag) {
             System.out.println("실패하였습니다");
+        } else {
+            System.out.println("이름이 변경되었습니다.");
         }
     }
 
@@ -236,9 +280,32 @@ public class UserView {
      */
     private void printMyPage() {
         System.out.println("=== 마이 페이지 ===");
-        UserFindRequest request = new UserFindRequest(SessionContext.getInstance().getUserId());
+        UserFindRequest request = new UserFindRequest(getUserId());
         UserFindResponse response = userController.myPage(request);
         System.out.println(response.toString());
     }
 
+    private long getUserId() {
+        return SessionContext.getInstance().getUserId();
+    }
+
+    private boolean isLoggedOutAndWarn() {
+        if (!SessionContext.getInstance().isLoggedIn()) {
+            System.out.println("로그인이 필요합니다.");
+            return true;
+        }
+        return false;
+    }
+
+    private void checkPassword(String... passwords) {
+        if (isNull(passwords) || passwords.length == 0) {
+            throw new InvalidPasswordException("비밀번호는 필수 입력 항목입니다.");
+        }
+        boolean isAnyPasswordBlank = Arrays.stream(passwords)
+            .anyMatch(StringUtils::isBlank);
+
+        if (isAnyPasswordBlank) {
+            throw new InvalidPasswordException("이전 비밀번호와 새 비밀번호는 필수입니다. 공백이 될 수 없습니다.");
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.lxp.global.exception;
 
+import java.util.function.Supplier;
+
 public class LXPExceptionHandler {
 
     public static void handle(Exception e) {
@@ -14,6 +16,16 @@ public class LXPExceptionHandler {
             return;
         }
         e.printStackTrace();
+    }
+
+    public static <T> T executeWithRetry(Supplier<T> callback) {
+        while (true) {
+            try {
+                return callback.get();
+            } catch (Exception e) {
+                handle(e);
+            }
+        }
     }
 
     private static String getTimestamp() {
