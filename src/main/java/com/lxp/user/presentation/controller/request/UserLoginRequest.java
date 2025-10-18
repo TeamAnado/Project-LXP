@@ -28,7 +28,7 @@ public record UserLoginRequest(
 
     private void checkPassword() {
         if (isBlank(this.password)) {
-            throw new InvalidPasswordException("새 비밀번호는 필수입니다.");
+            throw new InvalidPasswordException("비밀번호는 필수입니다.");
         }
     }
 }
