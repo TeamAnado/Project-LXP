@@ -1,15 +1,18 @@
 package com.lxp.enrollment.presentation.controller;
 
-import com.lxp.enrollment.exception.EnrollmentCompleteFailException;
-import com.lxp.enrollment.exception.EnrollmentDeleteFailException;
-import com.lxp.enrollment.exception.EnrollmentSaveFailException;
-import com.lxp.enrollment.exception.FindLectureUserException;
 import com.lxp.enrollment.presentation.controller.request.EnrollmentCheckRequest;
 import com.lxp.enrollment.presentation.controller.request.EnrollmentCompleteRequest;
 import com.lxp.enrollment.presentation.controller.request.EnrollmentDeleteRequest;
 import com.lxp.enrollment.presentation.controller.request.EnrollmentSaveRequest;
+import com.lxp.enrollment.presentation.controller.response.EnrollmentCheckResponse;
+import com.lxp.enrollment.presentation.controller.response.EnrollmentCompleteResponse;
+import com.lxp.enrollment.presentation.controller.response.EnrollmentDeleteResponse;
+import com.lxp.enrollment.presentation.controller.response.EnrollmentFindResponse;
+import com.lxp.enrollment.presentation.controller.response.EnrollmentSaveResponse;
 import com.lxp.enrollment.service.EnrollmentService;
-import com.lxp.global.exception.LXPException;
+import com.lxp.enrollment.service.dto.EnrollmentCourseDto;
+
+import java.util.List;
 
 public class EnrollmentController {
     private final EnrollmentService service;
@@ -18,45 +21,29 @@ public class EnrollmentController {
         this.service = service;
     }
 
-    public boolean save(EnrollmentSaveRequest request, long userId) {
-        try {
-            service.save(request.to(userId));
-            System.out.println("수강 신청이 완료되었습니다.");
-            return true;
-        } catch (LXPException e) {
-            throw new EnrollmentSaveFailException(e);
-        }
+    public EnrollmentSaveResponse save(EnrollmentSaveRequest request, long userId) {
+        service.save(request.to(userId));
+        return new EnrollmentSaveResponse(true, "수강 신청이 완료되었습니다.");
     }
 
-    public boolean delete(EnrollmentDeleteRequest request, long userId) {
-        try {
-            service.delete(request.to(userId));
-            System.out.println("수강 취소가 완료되었습니다.");
-            return true;
-        } catch (LXPException e) {
-            throw new EnrollmentDeleteFailException(e);
-        }
+    public EnrollmentDeleteResponse delete(EnrollmentDeleteRequest request, long userId) {
+        service.delete(request.to(userId));
+        return new EnrollmentDeleteResponse(true, "수강 취소가 완료되었습니다.");
     }
 
-    public boolean complete(EnrollmentCompleteRequest request, long userId) {
-        try {
-            service.complete(request.to(userId));
-            System.out.println("수강 완료 처리되었습니다.");
-            return true;
-        } catch (LXPException e) {
-            throw new EnrollmentCompleteFailException(e);
-        }
+    public EnrollmentCompleteResponse complete(EnrollmentCompleteRequest request, long userId) {
+        service.complete(request.to(userId));
+        return new EnrollmentCompleteResponse(true, "수강 완료 처리되었습니다.");
     }
 
-    public void findCoursesByUser(long userId) {
-        service.findCoursesByUser(userId);
+    public EnrollmentFindResponse findCoursesByUser(long userId) {
+        List<EnrollmentCourseDto> courses = service.findCoursesByUser(userId);
+        return new EnrollmentFindResponse(courses);
     }
 
-    public boolean isUserEnrolled(EnrollmentCheckRequest request, long userId) {
-        try {
-            return service.isUserEnrolled(request.to(userId));
-        } catch (LXPException e) {
-            throw new FindLectureUserException(e);
-        }
+
+    public EnrollmentCheckResponse isUserEnrolled(EnrollmentCheckRequest request, long userId) {
+        boolean enrolled = service.isUserEnrolled(request.to(userId));
+        return new EnrollmentCheckResponse(enrolled);
     }
 }
