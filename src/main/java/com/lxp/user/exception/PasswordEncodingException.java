@@ -1,6 +1,6 @@
 package com.lxp.user.exception;
 
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 
 public class PasswordEncodingException extends LXPException {
 
@@ -15,4 +15,5 @@ public class PasswordEncodingException extends LXPException {
     public PasswordEncodingException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

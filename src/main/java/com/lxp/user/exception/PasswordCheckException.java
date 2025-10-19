@@ -1,6 +1,6 @@
 package com.lxp.user.exception;
 
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 
 public class PasswordCheckException extends LXPException {
 
@@ -15,4 +15,5 @@ public class PasswordCheckException extends LXPException {
     public PasswordCheckException(String message, Throwable cause) {
         super(message, cause);
     }
+
 }

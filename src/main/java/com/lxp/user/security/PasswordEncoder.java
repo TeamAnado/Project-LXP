@@ -1,4 +1,4 @@
-package com.lxp.user.validator;
+package com.lxp.user.security;
 
 import com.lxp.support.Hashing;
 import com.lxp.user.exception.PasswordCheckException;
@@ -21,4 +21,5 @@ public class PasswordEncoder {
             throw new PasswordCheckException(e);
         }
     }
+
 }
