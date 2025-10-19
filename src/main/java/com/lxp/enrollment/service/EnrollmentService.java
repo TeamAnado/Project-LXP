@@ -77,15 +77,12 @@ public class EnrollmentService {
         }
     }
 
-    public void isUserEnrolled(EnrollmentLectureCheckDto dto) {
+    public boolean isUserEnrolled(EnrollmentLectureCheckDto dto) {
+        if ((dto == null || dto.userId() <= 0 || dto.lectureId() <= 0)) {
+            throw new InvalidIdException();
+        }
         try {
-            boolean result = this.enrollmentDao.isUserEnrolled(dto.userId(), dto.lectureId());
-
-            if (result) {
-                throw new AlreadyEnrolledException();
-            } else {
-                System.out.println("수강 중이 아닙니다.");
-            }
+            return this.enrollmentDao.isUserEnrolled(dto.userId(), dto.lectureId());
         } catch (LXPException e) {
             throw new FindLectureUserException(e);
         }
