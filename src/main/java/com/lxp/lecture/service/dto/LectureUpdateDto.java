@@ -27,5 +27,4 @@ public record LectureUpdateDto(
                 LocalDateTime.now()
         );
     }
-
 }
