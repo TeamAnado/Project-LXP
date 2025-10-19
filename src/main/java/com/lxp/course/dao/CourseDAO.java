@@ -1,8 +1,12 @@
 package com.lxp.course.dao;
 
+import com.lxp.course.exception.CourseNotDeletedException;
+import com.lxp.course.exception.CourseNotSavedException;
+import com.lxp.course.exception.CourseNotUpdatedException;
 import com.lxp.global.config.DBConfig;
 import com.lxp.course.model.Course;
 import com.lxp.course.model.enums.Category;
+import com.lxp.global.exception.LXPDatabaseAccessException;
 import com.lxp.support.QueryUtil;
 
 import java.sql.*;
@@ -21,7 +25,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public long save(Course course) throws SQLException {
+    public long save(Course course) {
         String sql = QueryUtil.getQuery("course.save");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -40,8 +44,10 @@ public class CourseDao {
                     }
                 }
             }
+            throw new CourseNotSavedException();
+        } catch (SQLException e) {
+            throw new CourseNotSavedException(e);
         }
-        throw new SQLException("Failed to save course on database.");
     }
 
     /**
@@ -50,7 +56,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public List<Course> findAll() throws SQLException {
+    public List<Course> findAll() {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findAll");
 
@@ -69,6 +75,8 @@ public class CourseDao {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 목록 조회 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -80,7 +88,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public Course findById(Long id) throws SQLException {
+    public Course findById(Long id) {
         String sql = QueryUtil.getQuery("course.findById");
 
         try (Connection connection = DBConfig.getInstance().getConnection();
@@ -98,6 +106,8 @@ public class CourseDao {
                         rs.getTimestamp("date_modified").toLocalDateTime()
                 );
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 조회 중 데이터베이스 오류 발생", e);
         }
         return null;
     }
@@ -109,7 +119,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public List<Course> findByTitleContaining(String keyword) throws SQLException {
+    public List<Course> findByTitleContaining(String keyword) {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByTitleContaining");
 
@@ -130,6 +140,8 @@ public class CourseDao {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("제목으로 강의 검색 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -141,7 +153,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public List<Course> findByCategory(Category category) throws SQLException {
+    public List<Course> findByCategory(Category category) {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByCategory");
 
@@ -162,6 +174,8 @@ public class CourseDao {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("카테고리별 강의 조회 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -173,7 +187,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public List<Course> findByInstructorId(Long instructorId) throws SQLException {
+    public List<Course> findByInstructorId(Long instructorId) {
         List<Course> courseList = new ArrayList<>();
         String sql = QueryUtil.getQuery("course.findByInstructorId");
 
@@ -194,6 +208,8 @@ public class CourseDao {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강사별 강의 조회 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -205,7 +221,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public boolean update(Course course) throws SQLException {
+    public boolean update(Course course) {
         String sql = QueryUtil.getQuery("course.update");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -217,6 +233,8 @@ public class CourseDao {
             pstmt.setLong(6, course.getId());
             int result = pstmt.executeUpdate();
             return result > 0;
+        } catch (SQLException e) {
+            throw new CourseNotUpdatedException(e);
         }
     }
 
@@ -227,7 +245,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public boolean delete(Long id) throws SQLException {
+    public boolean delete(Long id) {
         String sql = QueryUtil.getQuery("course.delete");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -235,6 +253,8 @@ public class CourseDao {
 
             int result = pstmt.executeUpdate();
             return result > 0;
+        } catch (SQLException e) {
+            throw new CourseNotDeletedException(e);
         }
     }
 
@@ -245,7 +265,7 @@ public class CourseDao {
      * @return
      * @throws SQLException
      */
-    public boolean existsById(long courseId) throws SQLException {
+    public boolean existsById(long courseId) {
         String sql = QueryUtil.getQuery("course.existsById");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -254,6 +274,8 @@ public class CourseDao {
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 존재 확인 중 데이터베이스 오류 발생", e);
         }
         return false;
     }
