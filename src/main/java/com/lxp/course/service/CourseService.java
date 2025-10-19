@@ -9,6 +9,7 @@ import com.lxp.course.service.dto.CourseDetailDto;
 import com.lxp.course.service.dto.CourseListDto;
 import com.lxp.course.service.dto.CreateCourseDto;
 import com.lxp.course.service.dto.UpdateCourseDto;
+import com.lxp.global.exception.LXPException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -84,7 +85,11 @@ public class CourseService {
     }
 
     public List<CourseListDto> findCoursesByTitle(String title) {
-        List<Course> courses = courseDao.findByTitleContaining(title);
+        String keyword = title == null ? "" : title.trim();
+        if (keyword.isEmpty()) {
+            return List.of();
+        }
+        List<Course> courses = courseDao.findByTitleContaining(keyword);
 
         return courses.stream()
                 .map(course -> new CourseListDto(
@@ -97,8 +102,10 @@ public class CourseService {
     }
 
     public List<CourseListDto> findCoursesByCategory(Category category) {
+        if (category == null) {
+            return List.of();
+        }
         List<Course> courses = courseDao.findByCategory(category);
-
         return courses.stream()
                 .map(course -> new CourseListDto(
                         course.getId(),
@@ -110,6 +117,9 @@ public class CourseService {
     }
 
     public List<CourseListDto> findCoursesByInstructorId(Long instructorId) {
+        if (instructorId == null || instructorId <= 0) {
+            return List.of();
+        }
         List<Course> courses = courseDao.findByInstructorId(instructorId);
 
         return courses.stream()
@@ -126,10 +136,16 @@ public class CourseService {
         if (dto.id() == null || dto.id() <= 0) {
             throw new InvalidCourseIdException();
         }
-        
+
         Course existingCourse = courseDao.findById(dto.id());
         if (existingCourse == null) {
             throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + dto.id());
+        }
+        if (dto.title() == null || dto.title().isBlank()) {
+            throw new LXPException("제목은 필수입니다.");
+        }
+        if (dto.category() == null) {
+            throw new LXPException("카테고리는 필수입니다.");
         }
 
         Course updatedCourse = new Course(

@@ -2,7 +2,6 @@ package com.lxp.course.presentation.controller;
 
 import com.lxp.course.model.enums.Category;
 import com.lxp.course.presentation.controller.request.CourseCreateRequest;
-import com.lxp.course.presentation.controller.request.CourseSearchRequest;
 import com.lxp.course.presentation.controller.request.CourseUpdateRequest;
 import com.lxp.course.presentation.controller.response.CourseCreateResponse;
 import com.lxp.course.presentation.controller.response.CourseDetailResponse;
@@ -37,39 +36,16 @@ public class CourseController {
         return CourseDetailResponse.from(courseDetail);
     }
 
-    public List<CourseResponse> searchCourses(CourseSearchRequest request) {
-        List<CourseListDto> courses;
-        
-        if (request.title() != null && !request.title().trim().isEmpty()) {
-            courses = courseService.findCoursesByTitle(request.title());
-        } else if (request.category() != null) {
-            courses = courseService.findCoursesByCategory(request.category());
-        } else if (request.instructorId() != null) {
-            courses = courseService.findCoursesByInstructorId(request.instructorId());
-        } else {
-            courses = courseService.findAllCourses();
-        }
-        
+    public List<CourseResponse> searchCoursesByTitle(String title) {
+        List<CourseListDto> courses = courseService.findCoursesByTitle(title);
         return mapToResponseList(courses);
     }
 
-    // Deprecated - use searchCourses instead
-    @Deprecated
-    public List<CourseResponse> searchCoursesByTitle(String title) {
-        return searchCourses(new CourseSearchRequest(title, null, null));
-    }
-
-    // Deprecated - use searchCourses instead  
-    @Deprecated
     public List<CourseResponse> searchCoursesByCategory(Category category) {
-        return searchCourses(new CourseSearchRequest(null, category, null));
+        List<CourseListDto> courses = courseService.findCoursesByCategory(category);
+        return mapToResponseList(courses);
     }
 
-    // Deprecated - use searchCourses instead
-    @Deprecated
-    public List<CourseResponse> searchCoursesByInstructor(Long instructorId) {
-        return searchCourses(new CourseSearchRequest(null, null, instructorId));
-    }
     
     private List<CourseResponse> mapToResponseList(List<CourseListDto> courses) {
         return courses.stream()
