@@ -1,13 +1,13 @@
 package com.lxp.user.presentation.view;
 
 import static com.lxp.global.exception.LXPExceptionHandler.handle;
-import static com.lxp.support.StringUtils.isBlank;
-import static com.lxp.support.StringUtils.isNull;
+import static com.lxp.global.support.StringUtils.isBlank;
+import static com.lxp.global.support.StringUtils.isNull;
 
 import com.lxp.global.context.SessionContext;
 import com.lxp.global.exception.LXPException;
 import com.lxp.global.exception.LXPExceptionHandler;
-import com.lxp.support.StringUtils;
+import com.lxp.global.support.StringUtils;
 import com.lxp.user.exception.InvalidPasswordException;
 import com.lxp.user.presentation.controller.UserController;
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;

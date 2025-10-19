@@ -4,7 +4,7 @@ import com.lxp.global.exception.LXPDatabaseAccessException;
 import com.lxp.lecture.exception.LectureNotSavedException;
 import com.lxp.lecture.exception.LectureNotUpdatedException;
 import com.lxp.lecture.model.Lecture;
-import com.lxp.support.QueryUtil;
+import com.lxp.global.support.QueryUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -2,7 +2,7 @@ package com.lxp.user.dao;
 
 import com.lxp.global.config.DBConfig;
 import com.lxp.global.exception.LXPDatabaseAccessException;
-import com.lxp.support.QueryUtil;
+import com.lxp.global.support.QueryUtil;
 import com.lxp.user.dao.vo.UserAuthInfo;
 import com.lxp.user.dao.vo.UserInfo;
 import com.lxp.user.exception.UserNotSavedException;

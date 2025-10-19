@@ -1,4 +1,4 @@
-package com.lxp.support;
+package com.lxp.global.support;
 
 import com.lxp.global.exception.LXPException;
 
