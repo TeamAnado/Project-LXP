@@ -1,10 +1,10 @@
-package com.lxp.lecture.dto;
+package com.lxp.lecture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 import com.lxp.lecture.presentation.controller.dto.request.LectureCreateRequest;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ class LectureCreateRequestTest {
         String titleExpectedMessage = "강의 제목은 비어 있을 수 없습니다.";
         String descriptionExpectedMessage = "강의 설명은 비어 있을 수 없습니다.";
         String pathExpectedMessage = "경로는 비어 있을 수 없습니다.";
-        
+
         return Stream.of(
                 Arguments.of(null, validTitle, validDescription, validPath, courseIdExpectedMessage),
                 Arguments.of(0L, validTitle, validDescription, validPath, courseIdExpectedMessage),

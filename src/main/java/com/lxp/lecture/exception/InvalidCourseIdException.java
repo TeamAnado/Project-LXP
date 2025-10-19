@@ -1,6 +1,6 @@
 package com.lxp.lecture.exception;
 
-import com.lxp.exception.LXPException;
+import com.lxp.global.exception.LXPException;
 
 public class InvalidCourseIdException extends LXPException {
 
