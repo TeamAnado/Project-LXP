@@ -4,10 +4,10 @@ import com.lxp.global.exception.LXPException;
 
 public class EnrollmentDeleteException extends LXPException {
     public EnrollmentDeleteException() {
-        super("수강 취소 처리 중 오류가 발생하였습니다.");
+        super("수강 취소 처리 중 오류가 발생했습니다.");
     }
 
     public EnrollmentDeleteException(Throwable cause) {
-        super("수강 취소 처리 중 오류가 발생하였습니다.", cause);
+        super("수강 취소 처리 중 오류가 발생했습니다.", cause);
     }
 }
