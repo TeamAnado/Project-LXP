@@ -21,8 +21,24 @@ public class CourseService {
     public CourseService() {
         courseDao = new CourseDao();
     }
+    
+    // For testing - allows dependency injection
+    public CourseService(CourseDao courseDao) {
+        this.courseDao = courseDao;
+    }
 
     public Long createCourse(CreateCourseDto dto) {
+        // Input validation
+        if (dto.title() == null || dto.title().trim().isEmpty()) {
+            throw new IllegalArgumentException("강의 제목은 필수 입력값입니다.");
+        }
+        if (dto.category() == null) {
+            throw new IllegalArgumentException("강의 카테고리는 필수 입력값입니다.");
+        }
+        if (dto.instructorId() == null || dto.instructorId() <= 0) {
+            throw new IllegalArgumentException("유효한 강사 ID가 필요합니다.");
+        }
+        
         LocalDateTime now = LocalDateTime.now();
         Course course = new Course(
                 null,
