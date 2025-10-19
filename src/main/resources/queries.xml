@@ -52,8 +52,6 @@
     <query key="course.existsById">
         SELECT COUNT(*) FROM courses
         WHERE id = ?
-
-        SELECT EXISTS(SELECT 1 FROM courses WHERE id = ?)
     </query>
     <!-- COURSE END -->
 
@@ -127,7 +125,7 @@
     </query>
     <!-- LECTURE END -->
 
-    <!-- ENROLLMENTS START -->
+    <!-- ENROLLMENT START -->
     <query key="enrollment.findByUser">
         SELECT *
         FROM enrollments
@@ -143,21 +141,21 @@
 
     <query key="enrollment.delete">
         UPDATE enrollments
-        SET state= ? date_created = NULL
-        WHERE user_id=? AND course_id=? AND state= ?
+        SET state = ?, date_created = NULL
+        WHERE user_id = ? AND course_id = ? AND state = ?
     </query>
 
     <query key="enrollment.completed">
         UPDATE enrollments
         SET state= ?, date_completed = NOW()
-        WHERE user_id=? AND course_id=? AND state= ?
+        WHERE user_id = ? AND course_id = ? AND state = ?
     </query>
 
     <query key="enrollment.isUserEnrolled">
         SELECT *
         FROM enrollments e
         JOIN lectures l on e.course_id = l.course_id
-        WHERE e.user_id = ? AND l.lecture_id = ?
+        WHERE e.user_id = ? AND l.id = ?
     </query>
 
     <query key="enrollment.findCoursesByUser">
@@ -171,6 +169,6 @@
         WHERE e.user_id = ? AND e.state IN (1, 3)
         ORDER BY c.id;
     </query>
-    
-    <!-- ENROLLMENTS END -->
+    <!-- ENROLLMENT END -->
+
 </properties>

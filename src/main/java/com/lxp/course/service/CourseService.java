@@ -79,7 +79,7 @@ public class CourseService {
         
         Course course = courseDao.findById(id);
         if (course == null) {
-            throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + id);
+            throw new CourseNotFoundException("해당 ID의 강좌를 찾을 수 없습니다: " + id);
         }
         return new CourseDetailDto(
                 course.getId(),
