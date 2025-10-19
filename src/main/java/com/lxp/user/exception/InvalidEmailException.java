@@ -8,4 +8,8 @@ public class InvalidEmailException extends LXPException {
         super("잘못된 이메일 형식입니다.");
     }
 
+    public InvalidEmailException(String message) {
+        super(message);
+    }
+
 }
