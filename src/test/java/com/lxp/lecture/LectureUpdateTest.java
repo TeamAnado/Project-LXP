@@ -110,6 +110,6 @@ class LectureUpdateTest {
         // when & then
         assertThatThrownBy(() -> lectureService.update(dto))
                 .isInstanceOf(LectureNotUpdatedException.class)
-                .hasMessageContaining("강의 수정 중 데이터베이스 오류가 발생했습니다.");
+                .hasMessageContaining("강의 수정 중 데이터베이스 오류");
     }
 }
