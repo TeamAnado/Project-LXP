@@ -1,6 +1,11 @@
 package com.lxp.lecture.dto;
 
-import com.lxp.global.exception.LXPException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+import com.lxp.exception.LXPException;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,16 +21,25 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class LectureCreateRequestTest {
 
     private static Stream<Arguments> invalidLectureArguments() {
+        String validDescription = "Valid Description";
+        String validTitle = "Valid Title";
+        String validPath = "Valid Path";
+
+        String courseIdExpectedMessage = "코스 ID는 null이거나 0 이하일 수 없습니다.";
+        String titleExpectedMessage = "강의 제목은 비어 있을 수 없습니다.";
+        String descriptionExpectedMessage = "강의 설명은 비어 있을 수 없습니다.";
+        String pathExpectedMessage = "경로는 비어 있을 수 없습니다.";
+
         return Stream.of(
-                Arguments.of(null, "Valid Title", "Valid Description", "Valid Path", "코스 ID는 null이거나 0 이하일 수 없습니다."),
-                Arguments.of(0L, "Valid Title", "Valid Description", "Valid Path", "코스 ID는 null이거나 0 이하일 수 없습니다."),
-                Arguments.of(-1L, "Valid Title", "Valid Description", "Valid Path", "코스 ID는 null이거나 0 이하일 수 없습니다."),
-                Arguments.of(1L, null, "Valid Description", "Valid Path", "강의 제목은 비어 있을 수 없습니다."),
-                Arguments.of(1L, "  ", "Valid Description", "Valid Path", "강의 제목은 비어 있을 수 없습니다."),
-                Arguments.of(1L, "Valid Title", null, "Valid Path", "강의 설명은 비어 있을 수 없습니다."),
-                Arguments.of(1L, "Valid Title", "  ", "Valid Path", "강의 설명은 비어 있을 수 없습니다."),
-                Arguments.of(1L, "Valid Title", "Valid Description", null, "경로는 비어 있을 수 없습니다."),
-                Arguments.of(1L, "Valid Title", "Valid Description", "  ", "경로는 비어 있을 수 없습니다.")
+                Arguments.of(null, validTitle, validDescription, validPath, courseIdExpectedMessage),
+                Arguments.of(0L, validTitle, validDescription, validPath, courseIdExpectedMessage),
+                Arguments.of(-1L, validTitle, validDescription, validPath, courseIdExpectedMessage),
+                Arguments.of(1L, null, validDescription, validPath, titleExpectedMessage),
+                Arguments.of(1L, "  ", validDescription, validPath, titleExpectedMessage),
+                Arguments.of(1L, validTitle, null, validPath, descriptionExpectedMessage),
+                Arguments.of(1L, validTitle, "  ", validPath, descriptionExpectedMessage),
+                Arguments.of(1L, validTitle, validDescription, null, pathExpectedMessage),
+                Arguments.of(1L, validTitle, validDescription, "  ", pathExpectedMessage)
         );
     }
 

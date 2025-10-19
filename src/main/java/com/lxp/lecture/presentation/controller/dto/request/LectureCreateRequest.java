@@ -1,9 +1,10 @@
-package com.lxp.lecture.dto;
+package com.lxp.lecture.presentation.controller.dto.request;
 
 import com.lxp.lecture.exception.InvalidCourseIdException;
 import com.lxp.lecture.exception.InvalidDescriptionException;
 import com.lxp.lecture.exception.InvalidPathException;
 import com.lxp.lecture.exception.InvalidTitleException;
+import com.lxp.lecture.service.dto.LectureSaveDto;
 import com.lxp.support.StringUtils;
 
 public record LectureCreateRequest(
@@ -18,6 +19,10 @@ public record LectureCreateRequest(
         validateTitle(title);
         validateDescription(description);
         validatePath(path);
+    }
+
+    public LectureSaveDto to() {
+        return new LectureSaveDto(courseId, title, description, path);
     }
 
     private void validateCourseId(Long courseId) {

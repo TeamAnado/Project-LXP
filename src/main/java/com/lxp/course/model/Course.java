@@ -13,24 +13,6 @@ public class Course extends BaseDateModifiedEntity {
     private String description;
 
     /**
-     * Constructor for creating new Course
-     * @param title
-     * @param description
-     * @param instructorId
-     * @param category
-     */
-    public Course(
-            String title, String description, Long instructorId, Category category
-    ) {
-        this.title = title;
-        this.description = description;
-        this.instructorId = instructorId;
-        this.category = category;
-        recordDateCreated();
-        recordDateModified();
-    }
-
-    /**
      * Constructor for reading from database
      * @param id
      * @param title
@@ -51,7 +33,6 @@ public class Course extends BaseDateModifiedEntity {
         this.category = category;
     }
 
-
     public String getTitle() {
         return title;
     }
@@ -59,7 +40,6 @@ public class Course extends BaseDateModifiedEntity {
     public String getDescription() {
         return description;
     }
-
 
     public Long getInstructorId() {
         return instructorId;
