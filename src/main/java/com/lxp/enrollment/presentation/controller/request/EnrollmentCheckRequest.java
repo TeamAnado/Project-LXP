@@ -4,6 +4,7 @@ import com.lxp.enrollment.exception.InvalidIdException;
 import com.lxp.enrollment.service.dto.EnrollmentLectureCheckDto;
 
 public record EnrollmentCheckRequest(Long lectureId) {
+
     public EnrollmentCheckRequest {
         if (lectureId == null || lectureId <= 0) {
             throw new InvalidIdException();
@@ -11,7 +12,7 @@ public record EnrollmentCheckRequest(Long lectureId) {
     }
 
     public EnrollmentLectureCheckDto to(long userId) {
-        return new EnrollmentLectureCheckDto(userId, this.lectureId);
+        return new EnrollmentLectureCheckDto(userId, lectureId);
     }
 
     @Override

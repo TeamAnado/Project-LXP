@@ -6,7 +6,9 @@ import com.lxp.enrollment.service.dto.CreateEnrollmentDto;
 public record EnrollmentDeleteRequest(Long courseId) {
 
     public EnrollmentDeleteRequest {
-        if (courseId == null || courseId <= 0) throw new InvalidIdException();
+        if (courseId == null || courseId <= 0) {
+            throw new InvalidIdException();
+        }
     }
 
     public CreateEnrollmentDto to(long userId) {
@@ -15,6 +17,8 @@ public record EnrollmentDeleteRequest(Long courseId) {
 
     @Override
     public String toString() {
-        return "EnrollmentDeleteRequest{courseId=" + courseId + "}";
+        return "EnrollmentDeleteRequest{" +
+                "courseId=" + courseId +
+                '}';
     }
 }

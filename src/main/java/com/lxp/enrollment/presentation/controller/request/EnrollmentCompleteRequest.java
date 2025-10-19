@@ -6,7 +6,9 @@ import com.lxp.enrollment.service.dto.CreateEnrollmentDto;
 public record EnrollmentCompleteRequest(Long courseId) {
 
     public EnrollmentCompleteRequest {
-        if (courseId == null || courseId <= 0) throw new InvalidIdException();
+        if (courseId == null || courseId <= 0) {
+            throw new InvalidIdException();
+        }
     }
 
     public CreateEnrollmentDto to(long userId) {
@@ -15,6 +17,8 @@ public record EnrollmentCompleteRequest(Long courseId) {
 
     @Override
     public String toString() {
-        return "EnrollmentCompleteRequest{courseId=" + courseId + "}";
+        return "EnrollmentCompleteRequest{" +
+                "courseId=" + courseId +
+                '}';
     }
 }
