@@ -1,9 +1,13 @@
 package com.lxp.user.presentation.controller;
 
 import com.lxp.user.presentation.controller.request.UserFindPasswordRequest;
+import com.lxp.user.presentation.controller.request.UserFindRequest;
 import com.lxp.user.presentation.controller.request.UserLoginRequest;
+import com.lxp.user.presentation.controller.request.UserPasswordCheckRequest;
 import com.lxp.user.presentation.controller.request.UserSaveRequest;
+import com.lxp.user.presentation.controller.request.UserUpdateInfoRequest;
 import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
+import com.lxp.user.presentation.controller.response.UserFindResponse;
 import com.lxp.user.presentation.controller.response.UserResponse;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
 import com.lxp.user.service.UserService;
@@ -26,16 +30,28 @@ public class UserController {
      * @param email
      * @return
      */
-    public UserResponse checkUserExistence(String email) {
+    public UserResponse getUserByEmailResponse(String email) {
         return UserResponse.from(userService.findByEmail(email));
+    }
+
+    public boolean updateUsername(UserUpdateInfoRequest request) {
+        return userService.updateUserInfo(request.to());
     }
 
     public boolean resetPassword(UserFindPasswordRequest request) {
         return userService.resetPassword(request.to());
     }
 
+    public boolean isValidPassword(UserPasswordCheckRequest request) {
+        return userService.isPasswordMatch(request.to());
+    }
+
     public boolean updatePassword(UserUpdatePasswordRequest request) {
         return userService.updatePassword(request.to());
+    }
+
+    public UserFindResponse myPage(UserFindRequest request) {
+        return UserFindResponse.from(userService.findUser(request.to()));
     }
 
     public UserResponse login(UserLoginRequest request) {
