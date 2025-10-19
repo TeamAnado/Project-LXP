@@ -10,7 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.lxp.course.dao.CourseDAO;
+import com.lxp.course.dao.CourseDao;
 import com.lxp.course.exception.CourseNotFoundException;
 import com.lxp.lecture.dao.LectureDao;
 import com.lxp.lecture.exception.LectureNotFoundException;
@@ -28,7 +28,7 @@ import org.mockito.ArgumentCaptor;
 class LectureUpdateTest {
 
     private final LectureDao mockLectureDao = mock(LectureDao.class);
-    private final CourseDAO mockCourseDao = mock(CourseDAO.class);
+    private final CourseDao mockCourseDao = mock(CourseDao.class);
     private final LectureService lectureService = new LectureService(mockLectureDao, mockCourseDao);
 
     @Test
