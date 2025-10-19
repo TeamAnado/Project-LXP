@@ -1,6 +1,8 @@
 package com.lxp.course.service;
 
-import com.lxp.course.dao.CourseDAO;
+import com.lxp.course.dao.CourseDao;
+import com.lxp.course.exception.CourseNotFoundException;
+import com.lxp.course.exception.InvalidCourseIdException;
 import com.lxp.course.model.Course;
 import com.lxp.course.model.enums.Category;
 import com.lxp.course.service.dto.CourseDetailDto;
@@ -9,31 +11,57 @@ import com.lxp.course.service.dto.CreateCourseDto;
 import com.lxp.course.service.dto.UpdateCourseDto;
 import com.lxp.global.exception.LXPException;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CourseService {
 
-    private final CourseDAO courseDAO;
+    private final CourseDao courseDao;
 
     public CourseService() {
-        courseDAO = new CourseDAO();
+        courseDao = new CourseDao();
+    }
+    
+    // For testing - allows dependency injection
+    public CourseService(CourseDao courseDao) {
+        this.courseDao = courseDao;
     }
 
-    public Long createCourse(CreateCourseDto dto) throws SQLException {
+    public Long createCourse(CreateCourseDto dto) {
+        // Validate dto is not null
+        if (dto == null) {
+            throw new LXPException("강의 생성 정보가 필요합니다.");
+        }
+        
+        // Handle title with proper trimming
+        String trimmedTitle = dto.title() == null ? "" : dto.title().trim();
+        if (trimmedTitle.isEmpty()) {
+            throw new LXPException("강의 제목은 필수 입력값입니다.");
+        }
+        
+        if (dto.category() == null) {
+            throw new LXPException("강의 카테고리는 필수 입력값입니다.");
+        }
+        if (dto.instructorId() == null || dto.instructorId() <= 0) {
+            throw new LXPException("유효한 강사 ID가 필요합니다.");
+        }
+        
+        LocalDateTime now = LocalDateTime.now();
         Course course = new Course(
-                dto.title(),
+                null,
+                trimmedTitle,
                 dto.description(),
                 dto.instructorId(),
-                dto.category()
+                dto.category(),
+                now,
+                now
         );
-        return courseDAO.save(course);
+        return courseDao.save(course);
     }
 
-    public List<CourseListDto> findAllCourses() throws SQLException {
-        List<Course> courses = courseDAO.findAll();
+    public List<CourseListDto> findAllCourses() {
+        List<Course> courses = courseDao.findAll();
         return courses.stream()
                 .map(course -> new CourseListDto(
                         course.getId(),
@@ -44,10 +72,14 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public CourseDetailDto findCourseById(Long id) throws SQLException {
-        Course course = courseDAO.findById(id);
+    public CourseDetailDto findCourseById(Long id) {
+        if (id == null || id <= 0) {
+            throw new InvalidCourseIdException();
+        }
+        
+        Course course = courseDao.findById(id);
         if (course == null) {
-            throw new LXPException("해당 ID의 강의를 찾을 수 없습니다: " + id);
+            throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + id);
         }
         return new CourseDetailDto(
                 course.getId(),
@@ -59,8 +91,12 @@ public class CourseService {
         );
     }
 
-    public List<CourseListDto> findCoursesByTitle(String title) throws SQLException {
-        List<Course> courses = courseDAO.findByTitleContaining(title);
+    public List<CourseListDto> findCoursesByTitle(String title) {
+        String keyword = title == null ? "" : title.trim();
+        if (keyword.isEmpty()) {
+            return List.of();
+        }
+        List<Course> courses = courseDao.findByTitleContaining(keyword);
 
         return courses.stream()
                 .map(course -> new CourseListDto(
@@ -72,8 +108,26 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CourseListDto> findCoursesByCategory(Category category) throws SQLException {
-        List<Course> courses = courseDAO.findByCategory(category);
+    public List<CourseListDto> findCoursesByCategory(Category category) {
+        if (category == null) {
+            return List.of();
+        }
+        List<Course> courses = courseDao.findByCategory(category);
+        return courses.stream()
+                .map(course -> new CourseListDto(
+                        course.getId(),
+                        course.getTitle(),
+                        course.getCategory(),
+                        course.getInstructorId()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public List<CourseListDto> findCoursesByInstructorId(Long instructorId) {
+        if (instructorId == null || instructorId <= 0) {
+            return List.of();
+        }
+        List<Course> courses = courseDao.findByInstructorId(instructorId);
 
         return courses.stream()
                 .map(course -> new CourseListDto(
@@ -85,27 +139,22 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    public List<CourseListDto> findCoursesByInstructorId(Long instructorId) throws SQLException {
-        List<Course> courses = courseDAO.findByInstructorId(instructorId);
-
-        return courses.stream()
-                .map(course -> new CourseListDto(
-                        course.getId(),
-                        course.getTitle(),
-                        course.getCategory(),
-                        course.getInstructorId()
-                ))
-                .collect(Collectors.toList());
-    }
-
-    public boolean updateCourse(UpdateCourseDto dto) throws SQLException {
-        // Check if course exists
-        Course existingCourse = courseDAO.findById(dto.id());
-        if (existingCourse == null) {
-            throw new LXPException("해당 ID의 강의를 찾을 수 없습니다: " + dto.id());
+    public boolean updateCourse(UpdateCourseDto dto) {
+        if (dto.id() == null || dto.id() <= 0) {
+            throw new InvalidCourseIdException();
         }
 
-        // Create new Course object with updated values and current dateModified
+        Course existingCourse = courseDao.findById(dto.id());
+        if (existingCourse == null) {
+            throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + dto.id());
+        }
+        if (dto.title() == null || dto.title().isBlank()) {
+            throw new LXPException("제목은 필수입니다.");
+        }
+        if (dto.category() == null) {
+            throw new LXPException("카테고리는 필수입니다.");
+        }
+
         Course updatedCourse = new Course(
                 existingCourse.getId(),
                 dto.title(),
@@ -116,16 +165,19 @@ public class CourseService {
                 touch()
         );
 
-        return courseDAO.update(updatedCourse);
+        return courseDao.update(updatedCourse);
     }
 
-    public boolean deleteCourse(Long id) throws SQLException {
-        // Check if course exists
-        if (!courseDAO.existsById(id)) {
-            throw new LXPException("해당 ID의 강의를 찾을 수 없습니다: " + id);
+    public boolean deleteCourse(Long id) {
+        if (id == null || id <= 0) {
+            throw new InvalidCourseIdException();
+        }
+        
+        if (!courseDao.existsById(id)) {
+            throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + id);
         }
 
-        return courseDAO.delete(id);
+        return courseDao.delete(id);
     }
 
     public LocalDateTime touch() {

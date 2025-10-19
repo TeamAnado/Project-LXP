@@ -1,11 +1,11 @@
-package com.lxp.lecture.exception;
+package com.lxp.course.exception;
 
 import com.lxp.global.exception.LXPException;
 
 public class InvalidCourseIdException extends LXPException {
 
     public InvalidCourseIdException() {
-        super("코스 ID는 null이거나 0 이하일 수 없습니다.");
+        super("잘못된 강좌 ID 입니다.");
     }
 
 }

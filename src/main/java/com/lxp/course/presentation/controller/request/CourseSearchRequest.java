@@ -1,11 +1,11 @@
-package com.lxp.course.service.dto;
+package com.lxp.course.presentation.controller.request;
 
 import com.lxp.course.model.enums.Category;
 
-public record CourseListDto(
-        Long id,
+public record CourseSearchRequest(
         String title,
         Category category,
         Long instructorId
 ) {
+
 }
