@@ -5,7 +5,7 @@ import com.lxp.lecture.exception.InvalidDescriptionException;
 import com.lxp.lecture.exception.InvalidPathException;
 import com.lxp.lecture.exception.InvalidTitleException;
 import com.lxp.lecture.service.dto.LectureSaveDto;
-import com.lxp.support.StringUtils;
+import com.lxp.global.support.StringUtils;
 
 public record LectureCreateRequest(
         Long courseId,

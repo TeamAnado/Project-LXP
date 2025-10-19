@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<properties>
+    <!-- COURSE START -->
+    <query key="course.save">
+        INSERT INTO courses
+        (instructor_id, title, category, description, date_created, date_modified)
+        VALUES (?, ?, ?, ?, ?, ?)
+    </query>
+
+    <query key="course.findAll">
+        SELECT
+        id, title, description, date_created, date_modified, instructor_id, category
+        FROM courses
+    </query>
+
+    <query key="course.findById">
+        SELECT id, title, description, date_created, date_modified, instructor_id, category
+        FROM courses
+        WHERE id = ?
+    </query>
+
+    <query key="course.findByTitleContaining">
+        SELECT id, title, description, date_created, date_modified, instructor_id, category
+        FROM courses
+        WHERE title LIKE ?
+    </query>
+
+    <query key="course.findByCategory">
+        SELECT id, title, description, date_created, date_modified, instructor_id, category
+        FROM courses
+        WHERE category = ?
+    </query>
+
+    <query key="course.findByInstructorId">
+        SELECT id, title, description, date_created, date_modified, instructor_id, category
+        FROM courses
+        WHERE instructor_id = ?
+    </query>
+
+    <query key="course.update">
+        UPDATE courses
+        SET instructor_id = ?, title = ?, category = ?, description = ?, date_modified = ?
+        WHERE id = ?
+    </query>
+
+    <query key="course.delete">
+        DELETE FROM courses
+        WHERE id = ?
+    </query>
+
+    <query key="course.existsById">
+        SELECT COUNT(*) FROM courses
+        WHERE id = ?
+    </query>
+    <!-- COURSE END -->
+
+    <!-- USER START -->
+    <query key="user.save">
+        INSERT INTO users
+        (email, password, name, date_created, date_modified)
+        VALUES(?, ?, ?, ?, ?)
+    </query>
+
+    <query key="user.existByEmail">
+        SELECT COUNT(*) FROM users WHERE email = ?
+    </query>
+
+    <query key="user.existById">
+        SELECT COUNT(*) FROM users WHERE id = ?
+    </query>
+
+    <query key="user.findById">
+        SELECT id, name, email, date_created, date_modified FROM users WHERE id = ?
+    </query>
+
+    <query key="user.findByIdWithPassword">
+        SELECT id, name, email, password FROM users WHERE id = ?
+    </query>
+
+    <query key="user.findByEmail">
+        SELECT id, email, password FROM users WHERE email = ?
+    </query>
+
+    <query key="user.updatePassword">
+        UPDATE users
+        SET password = ?, date_modified = ?
+        WHERE id = ?
+    </query>
+
+    <query key="user.updateUser">
+        UPDATE users
+        SET name = ?, date_modified = ?
+        WHERE id = ?
+    </query>
+
+    <query key="user.remove">
+        DELETE FROM users
+        WHERE id = ?
+    </query>
+    <!-- USER END -->
+
+    <!-- LECTURE START -->
+    <query key="lecture.save">
+        INSERT INTO lectures
+        (course_id, title, description, path, date_created, date_modified)
+        VALUES(?,?,?,?,?,?)
+    </query>
+
+    <query key="lecture.findById">
+        SELECT id, course_id, title, description, path, date_created, date_modified
+        FROM lectures
+        WHERE id = ?
+    </query>
+
+    <query key="lecture.update">
+        UPDATE lectures
+        SET course_id = ?, title = ?, description = ?, path = ?, date_modified = ?
+        WHERE id = ?
+    </query>
+
+    <query key="lecture.delete">
+        DELETE FROM lectures
+        WHERE id = ?
+    </query>
+    <!-- LECTURE END -->
+
+    <!-- ENROLLMENT START -->
+    <query key="enrollment.findByUser">
+        SELECT *
+        FROM enrollments
+        WHERE user_id = ? AND course_id = ?
+    </query>
+
+    <query key="enrollment.save">
+        INSERT INTO enrollments
+        (user_id,course_id, state)
+        VALUES
+        (?,?,?)
+    </query>
+
+    <query key="enrollment.delete">
+        UPDATE enrollments
+        SET state = ?, date_created = NULL
+        WHERE user_id = ? AND course_id = ? AND state = ?
+    </query>
+
+    <query key="enrollment.completed">
+        UPDATE enrollments
+        SET state= ?, date_completed = NOW()
+        WHERE user_id = ? AND course_id = ? AND state = ?
+    </query>
+
+    <query key="enrollment.isUserEnrolled">
+        SELECT *
+        FROM enrollments e
+        JOIN lectures l on e.course_id = l.course_id
+        WHERE e.user_id = ? AND l.id = ?
+    </query>
+
+    <query key="enrollment.findCoursesByUser">
+        SELECT
+        c.id AS course_id,
+        c.title,
+        c.description,
+        e.state
+        FROM enrollments e
+        JOIN courses c ON e.course_id = c.id
+        WHERE e.user_id = ? AND e.state IN (1, 3)
+        ORDER BY c.id;
+    </query>
+    <!-- ENROLLMENT END -->
+
+</properties>

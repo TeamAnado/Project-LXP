@@ -4,7 +4,7 @@ import com.lxp.global.exception.LXPException;
 import com.lxp.user.exception.InvalidNameException;
 import com.lxp.user.service.dto.UserUpdateInfoDto;
 
-import static com.lxp.support.StringUtils.isBlank;
+import static com.lxp.global.support.StringUtils.isBlank;
 
 public record UserUpdateInfoRequest(
     Long id,

@@ -4,7 +4,7 @@ import com.lxp.user.exception.InvalidEmailException;
 import com.lxp.user.exception.InvalidPasswordException;
 import com.lxp.user.service.dto.UserLoginDto;
 
-import static com.lxp.support.StringUtils.isBlank;
+import static com.lxp.global.support.StringUtils.isBlank;
 
 public record UserLoginRequest(
     String email,

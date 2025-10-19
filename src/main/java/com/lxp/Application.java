@@ -1,21 +1,149 @@
 package com.lxp;
 
-import com.lxp.global.config.DBConfig;
 import com.lxp.global.exception.LXPExceptionHandler;
 
-import java.sql.Connection;
 import java.util.Scanner;
 
 public class Application {
 
     public static void main(String[] args) {
-        try (Scanner scanner = new Scanner(System.in);
-             Connection connection = DBConfig.getInstance().getConnection()) {
-
+        try (Scanner scanner = new Scanner(System.in)) {
             //todo 기능 정의
-
         } catch (Exception e) {
             LXPExceptionHandler.handle(e);
         }
     }
 }
+
+/*
+
+// 1. 강좌 목록
+// 2. 강좌 등록 (로그인 되어있을때만 표시)
+// 3. 로그아웃 (로그인 되어있을때만 표시)
+// 2. 회원 가입 (로그아웃 되어있을때만 표시)
+// 3. 로그인 (로그아웃 되어있을때만 표시)
+// 4. 마이페이지(로그인 되어있을때만 표시) -> 개인정보 수정, 비밀번호 변경
+// ----------
+// q. 끝내기
+
+    // 강좌 목록
+    // == 강좌 목록 ==
+    // 1. {course 1}
+    // 2. {course 2}
+    // 3. {course 3}
+    // ...
+    // ----------
+    // a. 강좌 검색
+    // b. 강좌 등록
+    // c. 회원가입/회원가입(로그인 x) or 로그아웃(로그인 o)
+    // d. 마이페이지(로그인 o)
+    // q. 뒤로 가기
+
+        // 회원가입/로그인 선택 시
+        // a. 회원가입
+        // b. 로그인
+        // c. 비밀번호 찾기
+            // a. 회원가입 선택 시
+            // 이름, 이메일, 비밀번호 입력
+
+            // b. 로그인 선택 시
+            // 이메일, 비밀번호 입력
+
+            // c. 비밀번호 찾기
+            // 이메일 입력 후 새 비밀번호 입력하여 기존 비밀번호 초기화
+
+        // 마이페이지 선택 시
+        // user.email
+        // user.name
+            // a. 비밀번호 변경
+            // b. 개인정보 변경
+            // c. 수강중인 강좌 보기? 내가 개설한 강좌 보기? 기능이 구현되어있다면 붙일듯..
+            // r. 새로고침
+            // q. 뒤로 가기
+
+            // a -> 비밀번호 변경 선택 시
+            // 기존 비밀번호 입력, 새 비밀번호 입력하여 비밀번호 변경
+
+            // b -> 개인정보 변경 선택 시
+            // 비밀번호 입력 후 유저 이름 변경
+
+        // 강좌 검색 선택시
+        // 입력받은 텍스트 기반으로 제목 검색하여 목록 보여주기
+        // 상위 메뉴인 강좌 목록 화면 재활용
+
+        // 강좌 등록 선택시
+        // course.title
+        // course.description
+        // course.category 선택 화면으로
+            // category 선택 화면
+            // 1. {category 1}
+            // 2. {category 2}
+            // 3. {category 3}
+            // ...
+            // (취소 메뉴 없음 카테고리는 필수 항목)
+        // instructor id는 사용자에게 보여지지 않지만 현재 로그인된 user_id가 instructor_id 값으로 입력됨
+        // 순서대로 입력 후 저장
+
+        // 개별 강좌 선택시
+        // == {course.title} ==
+        // == {course.description}
+        // ----------
+        // 1. 강의1
+        // 2. 강의2
+        // 3. 강의3
+        // ...
+        // ----------
+        // a. 수강 신청하기 (수강중이 아닐때만 표시) -> enrollment 쪽 화면으로 넘어감
+        // b. 강좌 관리 (내가 이 강좌의 instructor 일 때만 표시)
+        // q. 뒤로 가기
+
+            // 개별 강의 선택시
+            // === {lecture.title} ===
+            // === {lecture.description} ===
+            // === 영상 ===
+            // 1. 시청 완료
+            // 2. 강의 수정하기
+            // 3. 강의 삭제하기
+            // ----------
+            // q. 뒤로 가기
+
+                // 강의 수정하기 선택시
+                // 수정 항목 선택
+                // a. 강좌 ID
+                // b. 강의 제목
+                // c. 강의 설명
+                // d. 파일 경로
+                // -----------
+                // q. 뒤로 가기
+
+                // 강의 삭제하기
+                // - 강의 ID로
+
+            // !!!보류
+            // 수강 메뉴
+            // a. 수강 취소하기 (수강 중일 때만 표시)
+            // b. 수강중인 강좌 목록 보기
+            // ----------
+            // q. 뒤로 가기
+
+            // 강좌 관리 메뉴
+            // == {course.title} ==
+            // 1. 강좌 정보 수정하기
+            // 2. 강좌 삭제하기
+            // 3. 강의 등록하기 -> lecture 쪽 화면으로 넘어감
+            // ----------
+            // q. 뒤로 가기
+
+                // 강좌 정보 수정 선택시
+                // 1. 강좌 제목
+                // 2. 강좌 설명
+                // 3. 강좌 카테고리
+                // ----------
+                // q. 뒤로 가기
+
+                // 강의 등록하기
+                // 1. 제목
+                // 2. 설명
+                // 3. 파일 경로 입력
+
+ */

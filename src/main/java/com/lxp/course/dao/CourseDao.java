@@ -7,7 +7,7 @@ import com.lxp.global.config.DBConfig;
 import com.lxp.course.model.Course;
 import com.lxp.course.model.enums.Category;
 import com.lxp.global.exception.LXPDatabaseAccessException;
-import com.lxp.support.QueryUtil;
+import com.lxp.global.support.QueryUtil;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
