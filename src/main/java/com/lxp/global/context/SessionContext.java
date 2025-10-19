@@ -1,6 +1,6 @@
 package com.lxp.global.context;
 
-import static com.lxp.support.StringUtils.isNull;
+import static com.lxp.global.support.StringUtils.isNull;
 
 /**
  * 애플리케이션의 현재 로그인된 사용자 상태(세션)를 관리하는 싱글톤 클래스입니다.

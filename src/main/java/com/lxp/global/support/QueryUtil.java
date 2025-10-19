@@ -1,4 +1,4 @@
-package com.lxp.support;
+package com.lxp.global.support;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

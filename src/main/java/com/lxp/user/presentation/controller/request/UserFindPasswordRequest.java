@@ -4,7 +4,7 @@ import com.lxp.global.exception.LXPException;
 import com.lxp.user.exception.InvalidPasswordException;
 import com.lxp.user.service.dto.UserFindPasswordDto;
 
-import static com.lxp.support.StringUtils.isBlank;
+import static com.lxp.global.support.StringUtils.isBlank;
 
 public record UserFindPasswordRequest(
     Long id,

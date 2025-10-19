@@ -1,4 +1,4 @@
-package com.lxp.global.util;
+package com.lxp.global.support;
 
 import java.util.Scanner;
 

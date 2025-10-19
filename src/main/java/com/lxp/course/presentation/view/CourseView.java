@@ -9,7 +9,7 @@ import com.lxp.course.presentation.controller.response.CourseDetailResponse;
 import com.lxp.course.presentation.controller.response.CourseResponse;
 import com.lxp.global.exception.LXPException;
 import com.lxp.global.exception.LXPExceptionHandler;
-import com.lxp.global.util.InputUtil;
+import com.lxp.global.support.InputUtil;
 import com.lxp.course.model.Session;
 
 import java.time.format.DateTimeFormatter;

@@ -1,6 +1,6 @@
 package com.lxp.user.security;
 
-import com.lxp.support.Hashing;
+import com.lxp.global.support.Hashing;
 import com.lxp.user.exception.PasswordCheckException;
 import com.lxp.user.exception.PasswordEncodingException;
 

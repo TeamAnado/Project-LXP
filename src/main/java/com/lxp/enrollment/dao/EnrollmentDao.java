@@ -9,7 +9,7 @@ import com.lxp.enrollment.exception.FindUserException;
 import com.lxp.enrollment.model.State;
 import com.lxp.enrollment.service.dto.EnrollmentCourseDto;
 import com.lxp.global.config.DBConfig;
-import com.lxp.support.QueryUtil;
+import com.lxp.global.support.QueryUtil;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -146,7 +146,7 @@ public class CourseService {
 
         Course existingCourse = courseDao.findById(dto.id());
         if (existingCourse == null) {
-            throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + dto.id());
+            throw new CourseNotFoundException("해당 ID의 강좌를 찾을 수 없습니다: " + dto.id());
         }
         if (dto.title() == null || dto.title().isBlank()) {
             throw new LXPException("제목은 필수입니다.");
@@ -174,7 +174,7 @@ public class CourseService {
         }
         
         if (!courseDao.existsById(id)) {
-            throw new CourseNotFoundException("해당 ID의 강의를 찾을 수 없습니다: " + id);
+            throw new CourseNotFoundException("해당 ID의 강좌를 찾을 수 없습니다: " + id);
         }
 
         return courseDao.delete(id);

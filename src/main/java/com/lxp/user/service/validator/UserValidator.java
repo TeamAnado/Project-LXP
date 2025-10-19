@@ -5,7 +5,7 @@ import com.lxp.user.exception.InvalidNameException;
 import com.lxp.user.exception.InvalidPasswordException;
 import com.lxp.user.security.PasswordEncoder;
 
-import static com.lxp.support.StringUtils.isBlank;
+import static com.lxp.global.support.StringUtils.isBlank;
 
 public class UserValidator {
     private static final int USERNAME_MIN_LENGTH = 3;
