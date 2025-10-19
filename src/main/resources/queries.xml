@@ -113,6 +113,10 @@
         WHERE id = ?
     </query>
 
+    <query key="lecture.findLecturesByCourseId">
+        SELECT * FROM lectures WHERE course_id = ?
+    </query>
+
     <query key="lecture.update">
         UPDATE lectures
         SET course_id = ?, title = ?, description = ?, path = ?, date_modified = ?
