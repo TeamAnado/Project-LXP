@@ -1,17 +1,27 @@
 package com.lxp.course.dao;
 
+import com.lxp.course.exception.CourseNotDeletedException;
+import com.lxp.course.exception.CourseNotSavedException;
+import com.lxp.course.exception.CourseNotUpdatedException;
 import com.lxp.global.config.DBConfig;
 import com.lxp.course.model.Course;
 import com.lxp.course.model.enums.Category;
+import com.lxp.global.exception.LXPDatabaseAccessException;
 import com.lxp.support.QueryUtil;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.sql.Timestamp;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class CourseDAO {
+public class CourseDao {
 
-    public CourseDAO() {
+    public CourseDao() {
     }
 
     /**
@@ -21,8 +31,8 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public long save(Course course) throws SQLException {
-        String sql = QueryUtil.getQuery("course.save");
+    public long save(Course course) {
+        String sql = getSafeQuery("course.save");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setLong(1, course.getInstructorId());
@@ -40,8 +50,10 @@ public class CourseDAO {
                     }
                 }
             }
+            throw new CourseNotSavedException();
+        } catch (SQLException e) {
+            throw new CourseNotSavedException(e);
         }
-        throw new SQLException("Failed to save course on database.");
     }
 
     /**
@@ -50,9 +62,9 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public List<Course> findAll() throws SQLException {
+    public List<Course> findAll() {
         List<Course> courseList = new ArrayList<>();
-        String sql = QueryUtil.getQuery("course.findAll");
+        String sql = getSafeQuery("course.findAll");
 
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -69,6 +81,8 @@ public class CourseDAO {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 목록 조회 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -80,8 +94,8 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public Course findById(Long id) throws SQLException {
-        String sql = QueryUtil.getQuery("course.findById");
+    public Course findById(Long id) {
+        String sql = getSafeQuery("course.findById");
 
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -98,6 +112,8 @@ public class CourseDAO {
                         rs.getTimestamp("date_modified").toLocalDateTime()
                 );
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 조회 중 데이터베이스 오류 발생", e);
         }
         return null;
     }
@@ -109,9 +125,9 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public List<Course> findByTitleContaining(String keyword) throws SQLException {
+    public List<Course> findByTitleContaining(String keyword) {
         List<Course> courseList = new ArrayList<>();
-        String sql = QueryUtil.getQuery("course.findByTitleContaining");
+        String sql = getSafeQuery("course.findByTitleContaining");
 
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -130,6 +146,8 @@ public class CourseDAO {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("제목으로 강의 검색 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -141,9 +159,9 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public List<Course> findByCategory(Category category) throws SQLException {
+    public List<Course> findByCategory(Category category) {
         List<Course> courseList = new ArrayList<>();
-        String sql = QueryUtil.getQuery("course.findByCategory");
+        String sql = getSafeQuery("course.findByCategory");
 
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -162,6 +180,8 @@ public class CourseDAO {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("카테고리별 강의 조회 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -173,9 +193,9 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public List<Course> findByInstructorId(Long instructorId) throws SQLException {
+    public List<Course> findByInstructorId(Long instructorId) {
         List<Course> courseList = new ArrayList<>();
-        String sql = QueryUtil.getQuery("course.findByInstructorId");
+        String sql = getSafeQuery("course.findByInstructorId");
 
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -194,6 +214,8 @@ public class CourseDAO {
                 );
                 courseList.add(course);
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강사별 강의 조회 중 데이터베이스 오류 발생", e);
         }
         return courseList;
     }
@@ -205,8 +227,8 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public boolean update(Course course) throws SQLException {
-        String sql = QueryUtil.getQuery("course.update");
+    public boolean update(Course course) {
+        String sql = getSafeQuery("course.update");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, course.getInstructorId());
@@ -217,6 +239,8 @@ public class CourseDAO {
             pstmt.setLong(6, course.getId());
             int result = pstmt.executeUpdate();
             return result > 0;
+        } catch (SQLException e) {
+            throw new CourseNotUpdatedException(e);
         }
     }
 
@@ -227,14 +251,16 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public boolean delete(Long id) throws SQLException {
-        String sql = QueryUtil.getQuery("course.delete");
+    public boolean delete(Long id) {
+        String sql = getSafeQuery("course.delete");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, id);
 
             int result = pstmt.executeUpdate();
             return result > 0;
+        } catch (SQLException e) {
+            throw new CourseNotDeletedException(e);
         }
     }
 
@@ -245,8 +271,8 @@ public class CourseDAO {
      * @return
      * @throws SQLException
      */
-    public boolean existsById(long courseId) throws SQLException {
-        String sql = QueryUtil.getQuery("course.existsById");
+    public boolean existsById(long courseId) {
+        String sql = getSafeQuery("course.existsById");
         try (Connection connection = DBConfig.getInstance().getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setLong(1, courseId);
@@ -254,8 +280,25 @@ public class CourseDAO {
             if (rs.next()) {
                 return rs.getInt(1) > 0;
             }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 존재 확인 중 데이터베이스 오류 발생", e);
         }
         return false;
+    }
+
+    /**
+     * 안전한 쿼리 조회 - 키가 존재하지 않으면 예외 발생
+     *
+     * @param key 쿼리 키
+     * @return SQL 쿼리 문자열
+     * @throws LXPDatabaseAccessException 쿼리 키가 존재하지 않을 때
+     */
+    private String getSafeQuery(String key) {
+        String query = QueryUtil.getQuery(key);
+        if (query == null) {
+            throw new LXPDatabaseAccessException("SQL Query 키 누락: " + key);
+        }
+        return query;
     }
 
 }

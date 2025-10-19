@@ -1,4 +1,4 @@
-package com.lxp.lecture;
+package com.lxp.lecture.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
