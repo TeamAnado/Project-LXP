@@ -6,8 +6,11 @@ import com.lxp.lecture.dao.LectureDao;
 import com.lxp.lecture.exception.LectureNotFoundException;
 import com.lxp.lecture.model.Lecture;
 import com.lxp.lecture.presentation.controller.dto.response.LectureCreateResponse;
+import com.lxp.lecture.service.dto.LectureListDto;
 import com.lxp.lecture.service.dto.LectureSaveDto;
 import com.lxp.lecture.service.dto.LectureUpdateDto;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class LectureService {
 
@@ -33,6 +36,16 @@ public class LectureService {
         if (!courseDao.existsById(dto.courseId())) {
             throw new CourseNotFoundException();
         }
+    }
+
+    public List<LectureListDto> findLecturesByCourseId(long courseId) {
+        return lectureDao.findLecturesByCourseId(courseId).stream()
+                .map(LectureListDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public void deleteLecture(long lectureId) {
+        lectureDao.delete(lectureId);
     }
 
     public void update(LectureUpdateDto dto) {

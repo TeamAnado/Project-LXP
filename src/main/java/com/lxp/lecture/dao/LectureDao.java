@@ -1,16 +1,18 @@
 package com.lxp.lecture.dao;
 
 import com.lxp.global.exception.LXPDatabaseAccessException;
+import com.lxp.global.support.QueryUtil;
 import com.lxp.lecture.exception.LectureNotSavedException;
 import com.lxp.lecture.exception.LectureNotUpdatedException;
 import com.lxp.lecture.model.Lecture;
-import com.lxp.global.support.QueryUtil;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class LectureDao {
@@ -22,7 +24,7 @@ public class LectureDao {
     }
 
     public long save(Lecture lecture) {
-        String sql = QueryUtil.getQuery("lecture.save");
+        String sql = getSafeQuery("lecture.save");
         try (PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             setLectureParameters(pstmt, lecture);
             return executeAndGetKey(pstmt);
@@ -32,7 +34,7 @@ public class LectureDao {
     }
 
     public Optional<Lecture> findById(long lectureId) {
-        String sql = QueryUtil.getQuery("lecture.findById");
+        String sql = getSafeQuery("lecture.findById");
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setLong(1, lectureId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -43,13 +45,39 @@ public class LectureDao {
         }
     }
 
+    public List<Lecture> findLecturesByCourseId(long courseId) {
+        String sql = getSafeQuery("lecture.findLecturesByCourseId");
+        List<Lecture> lectures = new ArrayList<>();
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, courseId);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lectures.add(mapToLecture(rs));
+                }
+            }
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 목록 조회 중 오류가 발생했습니다.", e);
+        }
+        return lectures;
+    }
+
     public void update(Lecture lecture) {
-        String sql = QueryUtil.getQuery("lecture.update");
+        String sql = getSafeQuery("lecture.update");
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             setUpdateParameters(ps, lecture);
             executeUpdateAndCheck(ps);
         } catch (SQLException e) {
             throw new LectureNotUpdatedException(e);
+        }
+    }
+
+    public void delete(long lectureId) {
+        String sql = getSafeQuery("lecture.delete");
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setLong(1, lectureId);
+            executeUpdateAndCheck(ps);
+        } catch (SQLException e) {
+            throw new LXPDatabaseAccessException("강의 삭제 중 오류가 발생했습니다.", e);
         }
     }
 
@@ -115,4 +143,12 @@ public class LectureDao {
         ps.setLong(6, lecture.getId());
     }
 
+    private String getSafeQuery(String key) {
+        String query = QueryUtil.getQuery(key);
+        if (query == null) {
+            throw new LXPDatabaseAccessException("SQL Query 키 누락: " + key);
+        }
+        return query;
+    }
+    
 }
