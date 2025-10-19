@@ -1,11 +1,7 @@
-package com.lxp.lecture.dto;
+package com.lxp.lecture;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertAll;
-
-import com.lxp.exception.LXPException;
-import java.util.stream.Stream;
+import com.lxp.global.exception.LXPException;
+import com.lxp.lecture.presentation.controller.dto.request.LectureCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

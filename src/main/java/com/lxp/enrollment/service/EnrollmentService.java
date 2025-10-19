@@ -79,9 +79,5 @@ public class EnrollmentService {
         }
         return enrollmentDao.findCoursesByUser(userId);
     }
+
 }
-
-    }
-}
-
-
