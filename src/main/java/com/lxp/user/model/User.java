@@ -1,25 +1,26 @@
-package com.lxp.user;
+package com.lxp.user.model;
 
-import com.lxp.base.BaseDateModifiedEntity;
+import com.lxp.global.base.BaseDateModifiedEntity;
 
-import static com.lxp.user.validator.UserValidator.validateEmail;
-import static com.lxp.user.validator.UserValidator.validateUsername;
+import java.time.LocalDateTime;
 
 public class User extends BaseDateModifiedEntity {
+
     private String name;
     private String email;
     private String password;
 
-    private User(String name, String email, String password) {
+    public User(Long id, String name, String email, String password, LocalDateTime dateCreated, LocalDateTime dateModified) {
+        super(id, dateCreated, dateModified);
         this.name = name;
         this.email = email;
         this.password = password;
     }
 
-    public static User createWithHashedPassword(String name, String email, String hashedPassword) {
-        validateUsername(name);
-        validateEmail(email);
-        return new User(name, email, hashedPassword);
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 
     public String getName() {
@@ -40,11 +41,11 @@ public class User extends BaseDateModifiedEntity {
     }
 
     public void update(String name) {
-        validateUsername(name);
         this.name = name;
     }
 
     public void updatePassword(String hashedPassword) {
         this.password = hashedPassword;
     }
+
 }
