@@ -10,14 +10,11 @@ public record LectureUpdateRequest(
         String description,
         String path
 ) {
-
-    public LectureUpdateRequest {
+    
+    public LectureUpdateDto to() {
         if (id <= 0) {
             throw new LXPException("강의 ID는 0 이하일 수 없습니다.");
         }
-    }
-
-    public LectureUpdateDto to() {
         return new LectureUpdateDto(this.id, this.courseId, this.title, this.description, this.path);
     }
 
