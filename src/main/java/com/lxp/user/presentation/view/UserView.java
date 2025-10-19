@@ -1,5 +1,9 @@
 package com.lxp.user.presentation.view;
 
+import static com.lxp.global.exception.LXPExceptionHandler.handle;
+import static com.lxp.support.StringUtils.isBlank;
+import static com.lxp.support.StringUtils.isNull;
+
 import com.lxp.global.context.SessionContext;
 import com.lxp.global.exception.LXPException;
 import com.lxp.global.exception.LXPExceptionHandler;
@@ -16,17 +20,11 @@ import com.lxp.user.presentation.controller.request.UserUpdatePasswordRequest;
 import com.lxp.user.presentation.controller.response.UserFindResponse;
 import com.lxp.user.presentation.controller.response.UserResponse;
 import com.lxp.user.presentation.controller.response.UserSaveResponse;
-
 import java.util.Arrays;
 import java.util.Scanner;
 
-import static com.lxp.global.exception.LXPExceptionHandler.handle;
-import static com.lxp.support.StringUtils.isBlank;
-import static com.lxp.support.StringUtils.isNull;
-
 /**
- * 콘솔 애플리케이션의 사용자 인터페이스(View) 및 요청 처리(Handler) 역할을 수행하는 클래스입니다.
- * 사용자로부터 입력을 받고, 결과를 출력하며, UserController로 요청을 위임합니다.
+ * 콘솔 애플리케이션의 사용자 인터페이스(View) 및 요청 처리(Handler) 역할을 수행하는 클래스입니다. 사용자로부터 입력을 받고, 결과를 출력하며, UserController로 요청을 위임합니다.
  */
 public class UserView {
 
@@ -39,8 +37,7 @@ public class UserView {
     }
 
     /**
-     * 앱 시작 시 표시되는 초기 인증 메뉴(로그인/회원가입/비밀번호 찾기)의 흐름을 제어합니다.
-     * 사용자가 로그인을 성공하면 UserResponse와 함께 인증된 ID를 설정합니다.
+     * 앱 시작 시 표시되는 초기 인증 메뉴(로그인/회원가입/비밀번호 찾기)의 흐름을 제어합니다. 사용자가 로그인을 성공하면 UserResponse와 함께 인증된 ID를 설정합니다.
      *
      * @return UserResponse 로그인 성공 시 ID를 포함하며, 뒤로가기 시 empty()를 반환
      */
@@ -97,7 +94,9 @@ public class UserView {
      * 마이페이지 정보를 출력하고, 관련된 기능 메뉴 실행 흐름을 시작합니다.
      */
     public void showMyPage() {
-        if (isLoggedOutAndWarn()) return;
+        if (isLoggedOutAndWarn()) {
+            return;
+        }
         printMyPage();
         runMyPageFunction();
     }
@@ -106,7 +105,9 @@ public class UserView {
      * 마이페이지 내부 기능(개인정보 수정, 비밀번호 변경 등)의 흐름을 제어합니다.
      */
     public void runMyPageFunction() {
-        if (isLoggedOutAndWarn()) return;
+        if (isLoggedOutAndWarn()) {
+            return;
+        }
         while (true) {
             try {
                 String answer = displayAndGetInput("1.개인정보 수정, 2. 비밀번호 변경, 3.새로고침, 4.뒤로가기: ");
@@ -137,8 +138,7 @@ public class UserView {
     //-------------------------------------------------------------------
 
     /**
-     * 사용자에게 메뉴 메시지를 출력하고 콘솔 입력을 받습니다.
-     * 입력이 비어있으면 LXPException을 발생시킵니다.
+     * 사용자에게 메뉴 메시지를 출력하고 콘솔 입력을 받습니다. 입력이 비어있으면 LXPException을 발생시킵니다.
      *
      * @param message 사용자에게 표시할 메뉴 프롬프트 메시지
      * @return String 사용자가 입력한 문자열
@@ -214,7 +214,9 @@ public class UserView {
      * @return boolean 비밀번호 업데이트 성공 여부
      */
     public boolean handlePasswordUpdate() {
-        if (isLoggedOutAndWarn()) return false;
+        if (isLoggedOutAndWarn()) {
+            return false;
+        }
         System.out.println("=== 비밀번호 변경 ===");
 
         String oldPassword = displayAndGetInput("기존 비밀번호: ");
@@ -241,7 +243,9 @@ public class UserView {
     }
 
     public void handleUserUpdate() {
-        if (isLoggedOutAndWarn()) return;
+        if (isLoggedOutAndWarn()) {
+            return;
+        }
         System.out.println("=== 유저 정보 변경 ===");
 
         String password = displayAndGetInput("비밀번호: ");
@@ -302,7 +306,7 @@ public class UserView {
             throw new InvalidPasswordException("비밀번호는 필수 입력 항목입니다.");
         }
         boolean isAnyPasswordBlank = Arrays.stream(passwords)
-            .anyMatch(StringUtils::isBlank);
+                .anyMatch(StringUtils::isBlank);
 
         if (isAnyPasswordBlank) {
             throw new InvalidPasswordException("이전 비밀번호와 새 비밀번호는 필수입니다. 공백이 될 수 없습니다.");
